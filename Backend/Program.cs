@@ -46,11 +46,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
           return keys!;
         },
 
-        ValidIssuer = "https://cognito-idp.eu-west-1.amazonaws.com/eu-west-1_28ckopm51",
+        ValidIssuer = builder.Configuration["COGNITO_ISSUER"] ?? throw new Exception("No COGNITO_ISSUER found"),
         ValidateIssuerSigningKey = true,
         ValidateIssuer = true,
         ValidateLifetime = true,
-        ValidAudience = "7g2q9pb8e9ro0bb1hpp8vc0i4n",
+        ValidAudience = builder.Configuration["COGNITO_AUDIENCE"] ?? throw new Exception("No COGNITO_AUDIENCE found"),
         ValidateAudience = false
       };
     });
