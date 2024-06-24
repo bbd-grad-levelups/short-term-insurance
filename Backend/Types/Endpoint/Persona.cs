@@ -1,6 +1,6 @@
 ﻿namespace Backend.Types.Endpoint
 {
-  public record Persona(int Id, int personaID, int electronics, bool blacklisted)
+  public record Persona(int Id, int PersonaID, int Electronics, bool Blacklisted)
   {
     // Parameterless constructor
     public Persona() : this(default, default, default, default)

@@ -1,13 +1,18 @@
 using System.Data.Common;
 using System.Text.Json;
+
 using Backend.Api;
 using Backend.Helpers.Cognito;
 using Backend.Types;
 using Backend.Types.Endpoint;
+
 using Dapper;
+
 using FluentValidation;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+
 using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,12 +20,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Configure CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("OurCors", builder =>
-    {
-        builder.WithOrigins(["http://localhost:4200"])
-            .WithHeaders(["Content-Type", "Authorization"])
-            .WithMethods([HttpMethods.Get, HttpMethods.Post, HttpMethods.Delete, HttpMethods.Options]).Build();
-    });
+  options.AddPolicy("OurCors", builder =>
+  {
+    builder.WithOrigins(["http://localhost:4200"])
+          .WithHeaders(["Content-Type", "Authorization"])
+          .WithMethods([HttpMethods.Get, HttpMethods.Post, HttpMethods.Delete, HttpMethods.Options]).Build();
+  });
 });
 
 var connectionString = new NpgsqlConnectionStringBuilder
