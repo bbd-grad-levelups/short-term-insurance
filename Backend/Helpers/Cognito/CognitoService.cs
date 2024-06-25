@@ -1,4 +1,4 @@
-﻿using Backend.Types;
+﻿using Backend.Models;
 
 namespace Backend.Helpers.Cognito;
 

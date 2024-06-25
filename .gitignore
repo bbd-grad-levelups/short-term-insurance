@@ -465,3 +465,5 @@ apps/db/.idea/vcs.xml
 apps/db/.idea/modules.xml
 apps/db/.idea/workspace.xml
 Backend/DiscordBot/Properties/launchSettings.json
+
+OldBackend/*

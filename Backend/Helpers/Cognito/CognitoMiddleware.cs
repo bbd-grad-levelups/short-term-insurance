@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using Backend.Types;
+using Backend.Models;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Backend.Helpers.Cognito;

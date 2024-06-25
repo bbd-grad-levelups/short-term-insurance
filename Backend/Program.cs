@@ -1,26 +1,62 @@
-using System.Data.Common;
-using System.Text.Json;
+using System;
 
-using Backend.Api;
-using Backend.Helpers.Cognito;
-using Backend.Types;
-using Backend.Types.Endpoint;
-
-using Dapper;
-
-using FluentValidation;
-
+using Microsoft.EntityFrameworkCore;
+using Backend.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-
-using Npgsql;
+using System.Text.Json;
+using Backend.Helpers.Cognito;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+
+builder.Services.AddControllers();
+builder.Services.AddDbContext<PersonaContext>(opt =>
+    opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+// Add Swagger generation
+builder.Services.AddSwaggerGen(c =>
+{
+  c.SwaggerDoc("v1", new OpenApiInfo { Title = "Short Term Insurance", Version = "v1" });
+
+  // Define the security scheme (bearer token)
+  var securityScheme = new OpenApiSecurityScheme
+  {
+    Name = "Authorization",
+    BearerFormat = "JWT",
+    Description = "JWT Authorization header using the Bearer scheme.",
+    In = ParameterLocation.Header,
+    Type = SecuritySchemeType.Http,
+    Scheme = "bearer"
+  };
+
+  // Add security definition to document
+  c.AddSecurityDefinition("Bearer", securityScheme);
+
+  // Use the Bearer scheme for all operations
+  c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 // Configure CORS
 builder.Services.AddCors(options =>
 {
-  options.AddPolicy("OurCors", builder =>
+  options.AddPolicy("CORS", builder =>
   {
     builder.WithOrigins(["http://localhost:4200"])
           .WithHeaders(["Content-Type", "Authorization"])
@@ -28,16 +64,6 @@ builder.Services.AddCors(options =>
   });
 });
 
-var connectionString = new NpgsqlConnectionStringBuilder
-{
-  Host = builder.Configuration["DB_URL"] ?? throw new Exception("No DB_URL found"),
-  Password = builder.Configuration["DB_PASSWORD"] ?? throw new Exception("No DB_PASSWORD found"),
-  Username = builder.Configuration["DB_USERNAME"] ?? throw new Exception("No DB_USERNAME found"),
-  Port = builder.Configuration.GetValue<int?>("DB_PORT") ?? NpgsqlConnection.DefaultPort,
-  Database = builder.Configuration["DB_DATABASE"] ?? "bem",
-  Pooling = true,
-  MaxPoolSize = 20,
-};
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -59,24 +85,23 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         ValidateAudience = false
       };
     });
-
-var dataSource = NpgsqlDataSource.Create(connectionString);
-DefaultTypeMap.MatchNamesWithUnderscores = true;
-builder.Services.AddSingleton<DbDataSource>(_ => dataSource);
+builder.Services.AddLogging();
 
 builder.Services.AddScoped<ICognitoService, CognitoService>();
 
-builder.Services.AddLogging();
 var app = builder.Build();
 
-// Use CORS
-app.UseCors("OurCors");
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+
 app.UseAuthorization();
-app.UseAuthentication();
-app.UseMiddleware<CognitoMiddleware>();
 
-app.MapGet("/", () => "Health is ok!").AllowAnonymous();
-var group = app.MapGroup("/");
+app.MapControllers().AllowAnonymous();
 
-PersonaEndpoints.RegisterEndpoints(group);
 app.Run();
