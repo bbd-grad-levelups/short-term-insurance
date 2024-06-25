@@ -1,0 +1,48 @@
+section {
+  margin-bottom: 2em;
+}
+
+section:first-child {
+  display: flex;
+  justify-content: space-between;
+  container-type: inline-size;
+  gap: 1em;
+}
+
+h2 {
+  display: inline-block;
+  border-bottom: 0.2rem solid var(--secondary);
+}
+
+h3 {
+  margin-block: 1rem;
+}
+
+td > button {
+  background-color: transparent;
+  color: var(--tertiary);
+  border: none;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.mat-mdc-header-row {
+  background-color: rgba(30, 31, 31, 0.62);
+  color: var(--tertiary );
+}
+.mat-mdc-row {
+  background-color: var(--secondary);
+  color: var(--tertiary );
+}
+
+.mat-column-Category {
+  width: 45%;
+}
+
+.mat-column-Goal, .mat-column-Amount, .mat-column-Date-Captured {
+  width: 20%;
+}
+
+.mat-column-Delete {
+  width: 2%;
+}
