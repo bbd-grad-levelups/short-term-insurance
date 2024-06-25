@@ -22,24 +22,18 @@ namespace Backend.Models
     [Column("blacklisted")]
     public bool Blacklisted { get; set; }
 
-    [Required]
-    [Column("bank_account")]
-    public string BankAccount { get; set; }
-
-    public Persona(int id = default, long personaId = default, int electronics = default, bool blacklisted = default, string bankAccount = "")
+    public Persona(int id = default, long personaId = default, int electronics = default, bool blacklisted = default)
     {
       Id = id;
       PersonaId = personaId;
       Electronics = electronics;
       Blacklisted = blacklisted;
-      BankAccount = bankAccount;
     }
 
     public Persona()
     {
       Electronics = default;
       Blacklisted = default;
-      BankAccount = string.Empty;
     }
   }
 }

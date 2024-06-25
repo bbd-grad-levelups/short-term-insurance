@@ -14,6 +14,11 @@ namespace TodoApi.Controllers
   public class TimeController() : ControllerBase
   {
 
+    /// <summary>
+    /// Endpoint called when a new time update arrives.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     [HttpPatch("")]
     public async Task<ActionResult<string>> ReceiveTimeUpdate([FromBody] TimeNotification request)
     {

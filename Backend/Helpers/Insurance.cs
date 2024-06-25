@@ -19,4 +19,20 @@ public static class Insurance
    
     return electronicsAmount * price * 0.2;
   }
+
+  public static double CalculatePayout(int destroyedAmount)
+  {
+    double price;
+    if (!CurrentPrice.HasValue)
+    {
+      // Retrieve from DB, otherwise retrieve from db.
+      price = 1;
+    }
+    else
+    {
+      price = CurrentPrice.Value;
+    }
+
+    return destroyedAmount * price * 0.9;
+  }
 }

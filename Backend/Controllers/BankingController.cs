@@ -6,17 +6,23 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Backend.Models;
+using Backend.Helpers;
 
 namespace TodoApi.Controllers
 {
   [Route("api")]
   [ApiController]
-  public class BankingController(PersonaContext context, string banking) : ControllerBase
+  public class BankingController(PersonaContext context, IBankingService banking) : ControllerBase
   {
     private readonly PersonaContext _context = context;
-    private readonly string _banking = banking;
+    private readonly IBankingService _banking = banking;
 
     // Currently stubbed, pending bank API spec
+    /// <summary>
+    /// Endpoint to receive debit order payment success from bank.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     [HttpPut("banking/commercial")]
     public async Task<ActionResult<string>> ReceiveCommercialBankNotification([FromBody] BankNotification request)
     {
@@ -54,6 +60,11 @@ namespace TodoApi.Controllers
     }
 
     // Response on request for an updated debit order
+    /// <summary>
+    /// Endpoint to receive response on updating a debit order.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     [HttpPost("banking/retail")]
     public async Task<ActionResult> ReceiveRetailBankNotification([FromBody] BankNotification request)
     {
@@ -69,6 +80,11 @@ namespace TodoApi.Controllers
     }
 
     // Response on tax sending request for tax
+    /// <summary>
+    /// Endpoint for getting request to pay tax or something, who fucking knows
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     [HttpPut("tax")]
     public async Task<ActionResult<string>> ReceiveTaxPaymentRequest([FromBody] TaxNotification request)
     {
