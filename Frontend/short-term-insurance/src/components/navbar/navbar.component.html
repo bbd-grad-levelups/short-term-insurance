@@ -1,0 +1,40 @@
+@if (isMobile) {
+  <mat-toolbar class="mobileNav">
+    <app-logo [class.hidden]="sidenav && sidenav.opened" [routerLink]="[{ outlets: { navBar: ['cashflow'] } }]"></app-logo>
+  <button mat-icon-button aria-label="Menu icon" (click)="toggleMenu()">
+    <mat-icon>menu</mat-icon>
+  </button>
+</mat-toolbar>
+}
+
+<mat-sidenav-container autosize>
+  <mat-sidenav [mode]="isMobile ? 'over' : 'side'" [opened]="isMobile ? 'false' : 'true'" disableClose>
+    <div class="nav-bar">
+      <!-- <app-logo [routerLink]="[{ outlets: { navBar: ['cashflow'] } }]"></app-logo> -->
+      <h1>
+        {{StoreName | slice:0:25 }}
+        @if (StoreName.length > 25) {
+          <span>...</span>
+        }
+      </h1>
+      <mat-nav-list class="links" (click)="toggleMenu()">
+        <a mat-list-item [routerLink]="[{ outlets: { navBar: ['persona'] } }]" routerLinkActive="active">
+          <span class="link">
+              <span>Persona</span>
+          </span>
+        </a>
+
+        <a mat-list-item [routerLink]="[{ outlets: { navBar: ['logs'] } }]" routerLinkActive="active">
+          <span class="link">
+            <span>Logs</span>
+          </span>
+        </a>
+      </mat-nav-list>
+    </div>
+    <button (click)="logout()">Logout</button>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <router-outlet name="navBar"></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>

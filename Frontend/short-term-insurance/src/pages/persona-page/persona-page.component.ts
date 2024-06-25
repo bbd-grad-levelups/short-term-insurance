@@ -6,14 +6,19 @@ import { InsuranceService } from '../../services/insurance.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Persona } from '../../models/persona.model';
 import { MatIcon } from '@angular/material/icon';
+import { PreventDoubleClick } from '../../directives/prevent-double-click.directive';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-persona-page',
   standalone: true,
   imports: [
     PersonaTableComponent,
+    PreventDoubleClick,
     MatPaginatorModule,
     MatIcon,
+    MatProgressSpinnerModule,
     MatTableModule
   ],
   templateUrl: './persona-page.component.html',
@@ -28,7 +33,6 @@ export class PersonaPageComponent {
     new MatPaginatorIntl(), ChangeDetectorRef.prototype
   );
 
-  isMobile: boolean = false;
   error: boolean = false;
   loading: boolean = true;
   isLastPage: boolean = false;
@@ -40,11 +44,12 @@ export class PersonaPageComponent {
   ) {}
 
   ngOnInit() {
-    this.getCashFlows();
+    this.getPersonaData();
   }
 
-  getCashFlows(nextPage: boolean = false) {
+  getPersonaData(nextPage: boolean = false) {
     this.error = false;
+    this.loading = true;
     this.insuranceService.getPersonas(this.page)
       .subscribe({
         next: response => {
@@ -55,8 +60,6 @@ export class PersonaPageComponent {
               this.snackBar.open('On Last Page.', 'Ok', {"duration": 4000});
               return;
             }
-
-            console.log(response.data);
 
             this.dataSource = new MatTableDataSource<Persona>(response.data);
             this.loading = false;
@@ -82,11 +85,11 @@ export class PersonaPageComponent {
     }
 
     this.page--;
-    this.getCashFlows()
+    this.getPersonaData()
   }
 
   nextPage() {
     this.page++;
-    this.getCashFlows(true)
+    this.getPersonaData(true)
   }
 }
