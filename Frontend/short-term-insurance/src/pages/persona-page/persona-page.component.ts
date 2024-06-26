@@ -1,6 +1,5 @@
 import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
-import { PersonaTableComponent } from '../../components/persona-table/persona-table.component';
-import {MatTableDataSource, MatTableModule} from "@angular/material/table";
+import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { MatPaginator, MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
 import { InsuranceService } from '../../services/insurance.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -14,7 +13,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   selector: 'app-persona-page',
   standalone: true,
   imports: [
-    PersonaTableComponent,
     PreventDoubleClick,
     MatPaginatorModule,
     MatIcon,
