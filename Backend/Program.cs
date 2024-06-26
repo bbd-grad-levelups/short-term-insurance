@@ -8,6 +8,11 @@ using Microsoft.OpenApi.Models;
 using Backend.Helpers;
 using System.Reflection;
 
+using Hangfire;
+using Hangfire.PostgreSql;
+using Backend.Helpers.Jobs;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -48,6 +53,12 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+
+builder.Services.AddHangfire(config =>
+{
+  config.UsePostgreSqlStorage(builder.Configuration.GetConnectionString("DefaultConnection"));// Use in-memory storage for demo purposes
+});
+
 
 builder.Services.AddCors(options =>
 {
@@ -99,7 +110,11 @@ if (app.Environment.IsDevelopment())
   app.UseSwagger();
   app.UseSwaggerUI();
 }
+// Configure Hangfire server and dashboard
+app.UseHangfireServer();
+app.UseHangfireDashboard();
 
+RecurringJob.AddOrUpdate<HangfireJobs>("RegisterCompany", x => x.RegisterCompany(100), Cron.MinuteInterval(1));
 app.UseHttpsRedirection();
 
 app.UseCors("CORS");

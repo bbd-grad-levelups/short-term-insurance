@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Backend.Models;
 using Backend.Helpers;
 
-namespace TodoApi.Controllers;
+namespace Backend.Controllers;
 
 [Route("api/electronics")]
 [ApiController]
@@ -58,29 +58,6 @@ public class ElectronicsController(PersonaContext context, IBankingService banki
     return NoContent();
   }
 
-  /// <summary>
-  /// Endpoint called when someone has died, and they will no longer be needing insurance for their stuff.
-  /// </summary>
-  /// <param name="request">Request body</param>
-  /// <returns>Nothing, it's a queue</returns>
-  [HttpDelete("")]
-  public async Task<ActionResult<string>> RemovePersona([FromBody] DeregisterElectronics request)
-  {
-    // No need to change anything external, bank account closes and we get a notification if new person wants insurance
-    var personaToDelete = await _context.Personas.FirstOrDefaultAsync(p => p.PersonaId == request.PersonaId);
-
-    if (personaToDelete == null)
-    {
-      return NotFound();
-    }
-    else
-    {
-      _context.Personas.Remove(personaToDelete);
-      await _context.SaveChangesAsync();
-      return Ok();
-    }
-  }
-
   // This one is when person's electronics amount changes.
   // Tracks new gained (can be negative?), and destroyed
   /// <summary>
@@ -95,23 +72,29 @@ public class ElectronicsController(PersonaContext context, IBankingService banki
     {
       var currentPersona = await _context.Personas.FirstAsync(p => p.PersonaId == request.PersonaId);
       // Create person if they didn't exist before
-      currentPersona ??= new Persona()
+      if (currentPersona != null)
       {
-        Blacklisted = false,
-        PersonaId = request.PersonaId,
-        Electronics = 0
-      };
-
-      currentPersona.Electronics += request.AmountNew;
-      _context.Entry(currentPersona).State = EntityState.Modified;
+        currentPersona.Electronics += request.AmountNew;
+      }
+      else
+      {
+        currentPersona ??= new Persona()
+        {
+          Blacklisted = false,
+          PersonaId = request.PersonaId,
+          Electronics = request.AmountNew
+        };
+        _context.Add(currentPersona);
+      }
+      var saveAwait = _context.SaveChangesAsync();
 
       var newPremium = Insurance.CalculateInsurance(currentPersona.Electronics);
-      await _context.SaveChangesAsync();
 
-      await _banking.CreateRetailDebitOrder(currentPersona.PersonaId, newPremium).ConfigureAwait(false);
+      await _banking.CreateRetailDebitOrder(currentPersona.PersonaId, newPremium);
+      await saveAwait;
     }
 
-    return Ok();
+    return NoContent();
   }
 
   /// <summary>
@@ -120,9 +103,9 @@ public class ElectronicsController(PersonaContext context, IBankingService banki
   /// <param name="request"></param>
   /// <returns></returns>
   [HttpPatch("price")]
-  public async Task<ActionResult> UpdatePrice([FromBody] ModifyInsurancePrice request)
+  public ActionResult UpdatePrice([FromBody] ModifyInsurancePrice request)
   {
     Insurance.CurrentPrice = request.NewPrice;
-    return Ok();
+    return NoContent();
   }
 }

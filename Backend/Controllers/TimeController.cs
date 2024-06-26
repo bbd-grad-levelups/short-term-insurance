@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using Backend.Models;
 using Backend.Helpers;
 
-namespace TodoApi.Controllers
+namespace Backend.Controllers
 {
-  [Route("api/time")]
+  [Route("api")]
   [ApiController]
   public class TimeController(PersonaContext context, IStockExchangeService stock, ILogger<TimeController> logger) : ControllerBase
   {
@@ -12,40 +12,20 @@ namespace TodoApi.Controllers
     private readonly IStockExchangeService _stock = stock;
     private readonly ILogger<TimeController> _logger = logger;
 
-    /// <summary>
-    /// Endpoint called when a new time update arrives.
-    /// </summary>
-    /// <param name="request"></param>
-    /// <returns></returns>
-    [HttpPatch("")]
-    public async Task<ActionResult<string>> ReceiveTimeUpdate([FromBody] TimeNotification request)
-    {
-      if (request.CurrentTime == "newMonth")
-      {
-        // Get monthly profit
-
-        // Send profit to stock exchange
-      }
-
-      
-
-      _logger.LogInformation("Current Date: {CurrentTime}", request.CurrentTime);
-      return Ok("");
-    }
-
-    [HttpPost]
+    [HttpPost("time")]
     public async Task<ActionResult> ReceiveStartSim()
     {
-      // Send stock notification
-
+      await _stock.RegisterCompany(10000);
+      _logger.LogInformation("Simulation started! Good luck...");
       return Ok();
     } 
 
     
-    [HttpGet("reset")]
+    [HttpPost("time/reset")]
     public async Task<ActionResult> ReceiveSimReset()
     {
-      await context.RemoveAll();
+      await _context.RemoveAll();
+      _logger.LogInformation("Simulation reset!");
       return Ok();
     }
   }

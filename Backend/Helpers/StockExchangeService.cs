@@ -15,13 +15,13 @@ public class StockExchangeSettings
 // record DebitOrderBody(long PersonaId, string CommercialAccount, double Amount);
 record RegisterBody(string Name, string BankAccount);
 record StockSaleBody(string Company, int Amount);
-
-record RegisterResponse(string Id, string Name, int BankAccount, int InitialStock);
+record DividendsBody(string Company, float Dividends);
 
 public interface IStockExchangeService
 {
-  Task<string?> RegisterCompany();
+  Task RegisterCompany(int amount);
   Task SellStock(int amount);
+  Task RequestDividends(float profit);
 }
 
 public class StockExchangeService : IStockExchangeService
@@ -42,7 +42,7 @@ public class StockExchangeService : IStockExchangeService
     _httpClient.DefaultRequestHeaders.Add("origin-service", "ShortTermInsurance");
   }
 
-  public async Task<string?> RegisterCompany()
+  public async Task RegisterCompany(int amount)
   {
     _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("x-api-key", _exchangeKey);
 
@@ -52,29 +52,35 @@ public class StockExchangeService : IStockExchangeService
     var content = new StringContent(jsonBody, System.Text.Encoding.UTF8, "application/json");
     content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-    string apiUrl = $"{_exchangeEndpoint}/businesses";
+    string apiUrl = $"{_exchangeEndpoint}/businesses?callbackUrl=blah";
     var request = new HttpRequestMessage(HttpMethod.Post, apiUrl)
     {
       Content = content
     };
 
     var response = await _httpClient.SendAsync(request);
-    string? companyId;
-    if (response.IsSuccessStatusCode)
-    {
-      // Deserialize the JSON response body
-      var jsonResponse = await response.Content.ReadAsStringAsync();
-      var responseObject = JsonConvert.DeserializeObject<RegisterResponse>(jsonResponse);
-
-      companyId = responseObject?.Id;
-    }
-    else
-    {
-      companyId = null;
-    }
     
     _logger.LogInformation(apiUrl, "", response.StatusCode);
-    return companyId; 
+  }
+
+  public async Task RequestDividends(float profit)
+  {
+    _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("x-api-key", _exchangeKey);
+
+    var body = new DividendsBody("ShortTermInsurance", profit);
+    var jsonBody = JsonConvert.SerializeObject(body);
+
+    var content = new StringContent(jsonBody, System.Text.Encoding.UTF8, "application/json");
+    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+    string apiUrl = $"{_exchangeEndpoint}/sell?callbackUrl=blah";
+    var request = new HttpRequestMessage(HttpMethod.Post, apiUrl)
+    {
+      Content = content
+    };
+
+    var response = await _httpClient.SendAsync(request);
+    _logger.LogInformation(apiUrl, "", response.StatusCode);
   }
 
   public async Task SellStock(int amount) 
