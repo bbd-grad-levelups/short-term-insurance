@@ -1,6 +1,6 @@
 namespace Backend.Models;
 
-public class ModifyInsurancePrice(double amount)
+public class ModifyInsurancePrice(double newPrice)
 {
-  public double NewPrice { get; set; } = amount;
+  public double NewPrice { get; set; } = newPrice;
 }

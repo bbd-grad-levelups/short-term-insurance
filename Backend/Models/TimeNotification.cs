@@ -1,6 +1,6 @@
 namespace Backend.Models;
 
-public class TimeNotification(string newTime)
+public class TimeNotification(string currentTime)
 {
-  public string CurrentTime { get; set;} = newTime;
+  public string CurrentTime { get; set;} = currentTime;
 }

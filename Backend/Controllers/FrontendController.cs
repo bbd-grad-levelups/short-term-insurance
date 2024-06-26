@@ -6,9 +6,10 @@ namespace TodoApi.Controllers
 {
   [Route("api")]
   [ApiController]
-  public class FrontendController(PersonaContext context) : ControllerBase
+  public class FrontendController(PersonaContext context, ILogger<FrontendController> logger) : ControllerBase
   {
     private readonly PersonaContext _context = context;
+    private readonly ILogger _logger = logger;
 
     /// <summary>
     /// Retrieves a list of personas, paginated.
@@ -24,6 +25,7 @@ namespace TodoApi.Controllers
     public async Task<ActionResult<IEnumerable<Persona>>> GetPersonas(int page = 1, int pageSize = 50)
     {
       var personas = await _context.Personas
+                                  .OrderBy(x => x.PersonaId)
                                   .Skip((page - 1) * pageSize)
                                   .Take(pageSize)
                                   .ToListAsync();
@@ -59,6 +61,7 @@ namespace TodoApi.Controllers
         new("2024|06|24|15|32|40", "Something happened"),
         new("2024|06|24|15|33|32", "Something else happened")
       };
+
       return Ok(someLogs);
     }
   }

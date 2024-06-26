@@ -1,18 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Backend.Models;
+using Backend.Helpers;
 
 namespace TodoApi.Controllers
 {
-  [Route("api/[controller]")]
+  [Route("api/time")]
   [ApiController]
-  public class TimeController() : ControllerBase
+  public class TimeController(PersonaContext context, IStockExchangeService stock, ILogger<TimeController> logger) : ControllerBase
   {
+    private readonly PersonaContext _context = context;
+    private readonly IStockExchangeService _stock = stock;
+    private readonly ILogger<TimeController> _logger = logger;
 
     /// <summary>
     /// Endpoint called when a new time update arrives.
@@ -22,14 +20,33 @@ namespace TodoApi.Controllers
     [HttpPatch("")]
     public async Task<ActionResult<string>> ReceiveTimeUpdate([FromBody] TimeNotification request)
     {
-      if (request.CurrentTime == "newMonth") // However this is done
+      if (request.CurrentTime == "newMonth")
       {
-        // Send out dividends?
+        // Get monthly profit
 
-        // Send out taxes?
+        // Send profit to stock exchange
       }
 
+      
+
+      _logger.LogInformation("Current Date: {CurrentTime}", request.CurrentTime);
       return Ok("");
+    }
+
+    [HttpPost]
+    public async Task<ActionResult> ReceiveStartSim()
+    {
+      // Send stock notification
+
+      return Ok();
+    } 
+
+    
+    [HttpGet("reset")]
+    public async Task<ActionResult> ReceiveSimReset()
+    {
+      await context.RemoveAll();
+      return Ok();
     }
   }
 }

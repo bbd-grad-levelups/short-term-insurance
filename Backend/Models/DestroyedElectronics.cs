@@ -1,8 +1,8 @@
 
 namespace Backend.Models;
 
-public class DestroyedElectronics(long persona, int destroyed)
+public class DestroyedElectronics(long personaId, int amountDestroyed)
 {
-  public long PersonaId { get; set; } = persona;
-  public int AmountDestroyed { get; set; } = destroyed;
+  public long PersonaId { get; set; } = personaId;
+  public int AmountDestroyed { get; set; } = amountDestroyed;
 }

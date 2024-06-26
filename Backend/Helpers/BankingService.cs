@@ -19,13 +19,14 @@ public interface IBankingService
 public class BankingService : IBankingService
 {
   private readonly HttpClient _httpClient;
+  private readonly ILogger<BankingService> _logger;
   private readonly string _retailEndpoint;
   internal string _commercialEndpoint;
   internal string _companyAccount;
   internal string _retailKey;
   internal string _commercialKey;
 
-  public BankingService(HttpClient httpClient, IOptions<BankingServiceSettings> options)
+  public BankingService(HttpClient httpClient, IOptions<BankingServiceSettings> options, ILogger<BankingService> logger)
   {
     _retailEndpoint = options.Value.RetailEndpoint;
     _commercialEndpoint = options.Value.CommercialEndpoint;
@@ -33,6 +34,7 @@ public class BankingService : IBankingService
     _retailKey = options.Value.RetailKey;
     _commercialKey = options.Value.CommercialKey;
     _companyAccount = options.Value.CompanyAccount;
+    _logger = logger;
 
     _httpClient = httpClient;
     _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));

@@ -12,31 +12,34 @@ namespace TodoApi.Controllers;
 
 [Route("api/electronics")]
 [ApiController]
-public class ElectronicsController(PersonaContext context, IBankingService banking) : ControllerBase
+public class ElectronicsController(PersonaContext context, IBankingService banking, ILogger<ElectronicsController> logger) : ControllerBase
 {
   private readonly PersonaContext _context = context;
   private readonly IBankingService _banking = banking;
+  private readonly ILogger<ElectronicsController> _logger = logger;
 
   /// <summary>
   /// Endpoint called when electronics get destroyed. Performs a claim payout and assigns a new debit order.
   /// </summary>
   /// <param name="request">The request body</param>
   /// <returns>Nothing, it's a queue</returns>
-  [HttpPost("")]
-  public async Task<ActionResult<Persona>> RemoveElectronics([FromBody] DestroyedElectronics request)
+  [HttpPatch("")]
+  public async Task<ActionResult> RemoveElectronics([FromBody] DestroyedElectronics request)
   {
     if (request.AmountDestroyed > 0)
     {
-      var persona = _context.Personas.Where(p => p.PersonaId == request.PersonaId).First();
+      var persona = await _context.Personas.FirstOrDefaultAsync(p => p.PersonaId == request.PersonaId);
 
-      bool boundedClaim = request.AmountDestroyed <= persona.Electronics;
       if (persona != null)
       {
+        _logger.LogInformation("Found persona: {ToString}", persona.ToString());
+        bool boundedClaim = request.AmountDestroyed <= persona.Electronics;
+
         int electronicsClaimed = boundedClaim ? request.AmountDestroyed : persona.Electronics;
         if (!persona.Blacklisted)
         {
           double claimPayout = Insurance.CalculatePayout(electronicsClaimed);
-          await _banking.MakeCommercialPayment(persona.PersonaId, claimPayout).ConfigureAwait(false);
+          await _banking.MakeCommercialPayment(persona.PersonaId, claimPayout);
         }
 
         persona.Electronics = boundedClaim ? persona.Electronics - request.AmountDestroyed : 0;
@@ -44,11 +47,15 @@ public class ElectronicsController(PersonaContext context, IBankingService banki
 
         var newPremium = Insurance.CalculateInsurance(persona.Electronics);
         await _context.SaveChangesAsync();
-        await _banking.CreateRetailDebitOrder(persona.PersonaId, newPremium).ConfigureAwait(false);
+        await _banking.CreateRetailDebitOrder(persona.PersonaId, newPremium);
+      }
+      else
+      {
+        _logger.LogInformation("Electronics destroyed for persona '{PersonaId}', but they are not on the system", request.PersonaId);
       }
     }
 
-    return Ok();
+    return NoContent();
   }
 
   /// <summary>

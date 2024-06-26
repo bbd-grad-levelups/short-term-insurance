@@ -84,9 +84,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddLogging();
 builder.Services.AddScoped<ICognitoService, CognitoService>();
 builder.Configuration.Bind("BankingServiceSettings", new BankingServiceSettings());
+builder.Configuration.Bind("StockExchangeSettings", new StockExchangeSettings());
 builder.Services.Configure<BankingServiceSettings>(builder.Configuration.GetSection("BankingServiceSettings"));
+builder.Services.Configure<StockExchangeSettings>(builder.Configuration.GetSection("StockExchangeSetting"));
 
 builder.Services.AddHttpClient<IBankingService, BankingService>();
+builder.Services.AddHttpClient<IStockExchangeService, StockExchangeService>(); 
 
 var app = builder.Build();
 
