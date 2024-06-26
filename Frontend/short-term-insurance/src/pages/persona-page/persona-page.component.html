@@ -32,16 +32,4 @@
         }
     </section>
 }
-
-<ng-template #noData>
-  <p *ngIf="error">
-    Cash flow history failed to load...
-  </p>
-  <p *ngIf="!error && loading">
-    Loading...
-  </p>
-  <p *ngIf="!error && !loading">
-    There are no cash flows yet, please add some transactions.
-  </p>
-</ng-template>
   

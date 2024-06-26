@@ -26,13 +26,13 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 })
 export class PersonaPageComponent {
 
-  displayedColumns: string[] = ['Persona'];
-
-  dataSource = new MatTableDataSource<Persona>([]);
   @ViewChild(MatPaginator) paginator: MatPaginator = new MatPaginator(
     new MatPaginatorIntl(), ChangeDetectorRef.prototype
   );
 
+  dataSource: MatTableDataSource<Persona> = new MatTableDataSource<Persona>();
+
+  displayedColumns: string[] = ['Persona'];
   error: boolean = false;
   loading: boolean = true;
   isLastPage: boolean = false;
