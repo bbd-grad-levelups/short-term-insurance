@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Backend.Models;
@@ -10,12 +5,13 @@ using Backend.Helpers;
 
 namespace TodoApi.Controllers
 {
-  [Route("api")]
+  [Route("api/banking")]
   [ApiController]
-  public class BankingController(PersonaContext context, IBankingService banking) : ControllerBase
+  public class BankingController(PersonaContext context, IBankingService banking, ILogger logger) : ControllerBase
   {
     private readonly PersonaContext _context = context;
     private readonly IBankingService _banking = banking;
+    private readonly ILogger _logger = logger;
 
     // Currently stubbed, pending bank API spec
     /// <summary>
@@ -23,7 +19,7 @@ namespace TodoApi.Controllers
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    [HttpPut("banking/commercial")]
+    [HttpPost("commercial")]
     public async Task<ActionResult<string>> ReceiveCommercialBankNotification([FromBody] BankNotification request)
     {
       // This will basically just be "we failed payment" or "persona failed payment"
@@ -33,7 +29,6 @@ namespace TodoApi.Controllers
 
         if (currentPersona == null)
         {
-          // person doesn't exist, whatever
           return Ok();
         }
         else
@@ -65,7 +60,7 @@ namespace TodoApi.Controllers
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    [HttpPost("banking/retail")]
+    [HttpPost("retail")]
     public async Task<ActionResult> ReceiveRetailBankNotification([FromBody] BankNotification request)
     {
       if (request.Message == "Debit update")
@@ -75,6 +70,7 @@ namespace TodoApi.Controllers
           // Might need to retry the update, pending what messages they actually have
         }
       }
+      _logger.LogInformation("Retail notification: " + request.ToString());
 
       return Ok();
     }
@@ -85,7 +81,7 @@ namespace TodoApi.Controllers
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    [HttpPut("tax")]
+    [HttpPost("tax")]
     public async Task<ActionResult<string>> ReceiveTaxPaymentRequest([FromBody] TaxNotification request)
     {
       // Bank payment, probably not using this endpoint tbh

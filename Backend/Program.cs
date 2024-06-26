@@ -10,10 +10,8 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 builder.Services.AddControllers();
-builder.Services.AddDbContext<PersonaContext>(opt =>
-    opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<PersonaContext>(opt => opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -51,8 +49,6 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-
-// Configure CORS
 builder.Services.AddCors(options =>
 {
   options.AddPolicy("CORS", builder =>
@@ -84,8 +80,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         ValidateAudience = false
       };
     });
-builder.Services.AddLogging();
 
+builder.Services.AddLogging();
 builder.Services.AddScoped<ICognitoService, CognitoService>();
 builder.Configuration.Bind("BankingServiceSettings", new BankingServiceSettings());
 builder.Services.Configure<BankingServiceSettings>(builder.Configuration.GetSection("BankingServiceSettings"));
@@ -97,13 +93,15 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+  app.UseSwagger();
+  app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
 
+app.UseCors("CORS");
 app.UseAuthorization();
+app.UseAuthentication();
 
 app.MapControllers().AllowAnonymous();
 

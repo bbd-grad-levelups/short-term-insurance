@@ -10,7 +10,7 @@ using Backend.Helpers;
 
 namespace TodoApi.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/electronics")]
 [ApiController]
 public class ElectronicsController(PersonaContext context, IBankingService banking) : ControllerBase
 {
@@ -108,14 +108,14 @@ public class ElectronicsController(PersonaContext context, IBankingService banki
   }
 
   /// <summary>
-  /// Endpoint called when price of electronics changes.
+  /// Endpoint called when price of insurance changes.
   /// </summary>
   /// <param name="request"></param>
   /// <returns></returns>
-  [HttpPatch("/price")]
-  public async Task<ActionResult> UpdatePrice([FromBody] ModifyElectronicsPrice request)
+  [HttpPatch("price")]
+  public async Task<ActionResult> UpdatePrice([FromBody] ModifyInsurancePrice request)
   {
-    Insurance.CurrentPrice = request.ElectronicsPrice;
+    Insurance.CurrentPrice = request.NewPrice;
     return Ok();
   }
 }
