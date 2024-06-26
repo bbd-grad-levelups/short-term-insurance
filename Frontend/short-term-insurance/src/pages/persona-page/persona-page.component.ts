@@ -30,7 +30,7 @@ export class PersonaPageComponent {
 
   dataSource: MatTableDataSource<Persona> = new MatTableDataSource<Persona>();
 
-  displayedColumns: string[] = ['Persona'];
+  displayedColumns: string[] = ['persona', 'numberOfDevices', 'blocked'];
   error: boolean = false;
   loading: boolean = true;
   isLastPage: boolean = false;
@@ -38,8 +38,8 @@ export class PersonaPageComponent {
 
   constructor(
     private insuranceService: InsuranceService,
-    private snackBar: MatSnackBar 
-  ) {}
+    private snackBar: MatSnackBar
+  ) { }
 
   ngOnInit() {
     this.getPersonaData();
@@ -55,10 +55,10 @@ export class PersonaPageComponent {
             this.isLastPage = !response.data.length;
             if (nextPage && this.isLastPage) {
               this.page--;
-              this.snackBar.open('On Last Page.', 'Ok', {"duration": 4000});
+              this.snackBar.open('On Last Page.', 'Ok', { "duration": 4000 });
               return;
             }
-
+            console.log(response.data);
             this.dataSource = new MatTableDataSource<Persona>(response.data);
             this.loading = false;
 
@@ -78,7 +78,7 @@ export class PersonaPageComponent {
 
   previousPage() {
     if (this.page === 1) {
-      this.snackBar.open('On First Page.', 'Ok', {"duration": 4000});
+      this.snackBar.open('On First Page.', 'Ok', { "duration": 4000 });
       return;
     }
 

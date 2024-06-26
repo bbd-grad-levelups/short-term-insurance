@@ -1,12 +1,12 @@
-import {AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
-import {MatListModule} from "@angular/material/list";
-import {MatSidenav, MatSidenavModule} from "@angular/material/sidenav";
-import {NavigationEnd, Router, RouterLink, RouterModule, RouterOutlet} from "@angular/router";
-import {MatIconModule} from "@angular/material/icon";
-import {MatButtonModule} from "@angular/material/button";
-import {MatToolbarModule} from "@angular/material/toolbar";
-import {NgClass, NgIf, NgStyle, SlicePipe} from "@angular/common";
-import {BreakpointObserver} from "@angular/cdk/layout";
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { MatListModule } from "@angular/material/list";
+import { MatSidenav, MatSidenavModule } from "@angular/material/sidenav";
+import { NavigationEnd, Router, RouterLink, RouterModule, RouterOutlet } from "@angular/router";
+import { MatIconModule } from "@angular/material/icon";
+import { MatButtonModule } from "@angular/material/button";
+import { MatToolbarModule } from "@angular/material/toolbar";
+import { NgClass, NgIf, NgStyle, SlicePipe } from "@angular/common";
+import { BreakpointObserver } from "@angular/cdk/layout";
 
 @Component({
   selector: 'app-navbar',
@@ -70,13 +70,14 @@ export class NavbarComponent implements OnInit, AfterViewInit {
     if (lastVisitedRoute) {
       this.router.navigateByUrl(lastVisitedRoute);
     } else {
-      this.router.navigate(['/home', { outlets:  'persona' }]);
+
+      this.router.navigate(['/home', { outlets: { 'navBar': ['persona'] } }]);
     }
   }
 
   private mobileSetup() {
     this.observer
-      .observe(['(max-width: 800px)']) 
+      .observe(['(max-width: 800px)'])
       .subscribe((screenSize) => {
         this.isMobile = screenSize.matches;
       });

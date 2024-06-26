@@ -1,0 +1,10 @@
+.nav-container {
+  height: 100%;
+  width: 100%;
+}
+
+.nav-bar {
+  background-color: var(--secondary);
+  color: var(--tertiary);
+}
+
