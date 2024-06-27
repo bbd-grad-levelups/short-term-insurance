@@ -19,7 +19,7 @@ resource "aws_cognito_user_pool" "prd_pool" {
 }
 
 resource "aws_cognito_user_pool_domain" "prd_pool" {
-  domain       = "business-expense-manager"
+  domain       = "short-term-insurance"
   user_pool_id = aws_cognito_user_pool.prd_pool.id
 }
 
@@ -54,6 +54,6 @@ resource "aws_cognito_user_pool_client" "prd_pool" {
   supported_identity_providers = ["Google"]
   allowed_oauth_flows          = ["implicit"]
   allowed_oauth_scopes         = ["email", "openid"]
-  callback_urls                = ["https://web.karle.co.za", "http://localhost:4200"]
+  callback_urls                = ["https://${var.domain_name}", "http://localhost:4200"]
   generate_secret              = true
 }

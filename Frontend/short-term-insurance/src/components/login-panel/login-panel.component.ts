@@ -20,9 +20,7 @@ export class LoginPanelComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     @Inject(DOCUMENT) private document: Document,
-  ) {
-    console.log('LoginPanelComponent');
-  }
+  ) {}
 
   ngOnInit() {
     // already logged In
@@ -44,6 +42,7 @@ export class LoginPanelComponent implements OnInit {
       const token = fragment[1];
       if (token) {
         sessionStorage.setItem('id_token', token);
+        this.router.navigate(['/home']);
       }
     });
   }
