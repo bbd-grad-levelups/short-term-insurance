@@ -1,0 +1,43 @@
+name: "Terraform Plan"
+
+on:
+  workflow_call:
+    inputs:
+      aws-role:
+        required: true
+        type: string
+      terraform-directory:
+        required: true
+        type: string
+
+permissions:
+  checks: write
+  contents: read
+  id-token: write
+
+jobs:
+  terraform-plan:
+    name: "Terraform plan"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@main
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@main
+        with:
+          role-to-assume: ${{ inputs.aws-role }}
+          aws-region: "eu-west-1"
+          role-session-name: GitHub_to_AWS_via_FederatedOIDC
+
+      - name: Terraform Init
+        id: init
+        working-directory: ${{ inputs.terraform-directory }}
+        run: |
+          make init
+
+      - name: Terraform Plan
+        id: plan
+        working-directory: ${{ inputs.terraform-directory }}
+        run: |
+          make plan

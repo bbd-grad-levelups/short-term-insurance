@@ -1,0 +1,46 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  checks: write
+  contents: write
+  id-token: write
+  security-events: write
+
+jobs:
+  prod-ci:
+    name: "Prod CI"
+    uses: ./.github/workflows/prod-ci.yaml
+    secrets: inherit
+
+  terraform-apply:
+    name: "Terraform apply"
+    needs: prod-ci
+    secrets: inherit
+    uses: ./.github/workflows/terraform-cd.yaml
+    with:
+      aws-role: ${{ vars.AWS_ROLE }}
+      terraform-directory: ${{ vars.TERRAFORM_DIRECTORY }}
+
+  database-migration:
+    name: "Liquibase update"
+    needs: terraform-apply
+    secrets: inherit
+    uses: ./.github/workflows/liquibase-cd.yaml 
+    with:
+      aws-role: ${{ vars.AWS_ROLE }}
+      db-name: ${{ vars.DB_NAME }} 
+
+  release-cd:
+    name: "Deploy/Release API,Web"
+    needs: database-migration
+    secrets: inherit
+    uses: ./.github/workflows/release-cd.yaml  
+    with:
+      aws-role: ${{ vars.AWS_ROLE }}
+      account-id: ${{ vars.ACCOUNT_ID }}
+      db-name: ${{ vars.DB_NAME }}
+

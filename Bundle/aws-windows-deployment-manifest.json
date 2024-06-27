@@ -1,0 +1,15 @@
+{
+    "manifestVersion": 1,
+    "deployments": {
+        "aspNetCoreWeb": [
+        {
+            "name": "Backend",
+            "parameters": {
+                "appBundle": "./api",
+                "iisPath": "",
+                "iisWebSite": "Default Web Site"
+            }
+        }
+        ]
+    }
+}

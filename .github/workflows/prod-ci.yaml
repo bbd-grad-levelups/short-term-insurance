@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  workflow_call:
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  checks: write
+  contents: read
+  id-token: write
+  security-events: write
+
+jobs:
+  # terraform-checks:
+  #   name: "Terraform checks"
+  #   uses: ./.github/workflows/terraform-checks.yaml
+  #   with:
+  #     terraform-directory: ${{ vars.TERRAFORM_DIRECTORY }}
+  
+  terraform-plan:
+    name: "Terraform plan"
+    secrets: inherit
+    uses: ./.github/workflows/terraform-ci.yaml
+    with:
+      aws-role: ${{ vars.AWS_ROLE }}
+      terraform-directory: ${{ vars.TERRAFORM_DIRECTORY }}
+
+  test-database-migration:
+    name: "Liquibase checks"
+    secrets: inherit
+    uses: ./.github/workflows/liquibase-ci.yaml
+    with:
+      aws-role: ${{ vars.AWS_ROLE }}
+      db-name: ${{ vars.DB_NAME }}
