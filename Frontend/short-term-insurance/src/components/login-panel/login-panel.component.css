@@ -1,0 +1,8 @@
+button {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    color: var(--tertiary);
+    text-align: center;
+}

@@ -1,0 +1,25 @@
+article {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-column-gap: 0.5em;
+  justify-content: center;
+  align-items: center;
+
+  text-align: left;
+}
+
+img {
+  width: 5em;
+  justify-self: end;
+}
+
+p {
+ color: var(--tertiary);
+ font-size: x-large;
+}
+
+p > span {
+  display: block;
+  color: var(--primary);
+  font-weight: bold;
+}
