@@ -1,10 +1,81 @@
-.nav-container {
-  height: 100%;
-  width: 100%;
+mat-sidenav-container {
+  height:100%;
+}
+
+mat-sidenav {
+  padding: 3rem;
+  border-radius: 0;
+  background-color: var(--secondary);
+  /*position: fixed;*/
+}
+
+.link {
+  color: white;
+  align-items: center;
 }
 
 .nav-bar {
-  background-color: var(--secondary);
   color: var(--tertiary);
+  display: flex;
+  flex-direction: column;
+  gap: 4em;
 }
 
+.nav-bar > h1 {
+  font-weight: normal;
+  text-align: center;
+}
+
+.links {
+  margin-bottom: auto;
+  text-align: center;
+}
+
+mat-sidenav button {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  color: var(--tertiary);
+  float: right;
+}
+
+.active {
+  background-color: var(--primary);
+  border-radius: 0!important;
+}
+.active .link > span {
+  color: var(--secondary);
+  font-weight: 590;
+}
+
+mat-sidenav-content {
+  padding: 2rem;
+}
+
+app-logo {
+  cursor: pointer;
+}
+
+/* Mobile */
+.mobileNav {
+  /*position: sticky;*/
+  /*top: 0;*/
+  background-color: var(--secondary);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-content: right;
+  height: 15%;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.mobileNav app-logo {
+  font-size: small;
+}
+
+.mobileNav > button {
+  justify-self: right;
+}

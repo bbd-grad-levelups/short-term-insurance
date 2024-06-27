@@ -8,11 +8,13 @@ import { MatIcon } from '@angular/material/icon';
 import { PreventDoubleClick } from '../../directives/prevent-double-click.directive';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-persona-page',
   standalone: true,
   imports: [
+    MatButtonModule,
     PreventDoubleClick,
     MatPaginatorModule,
     MatIcon,
@@ -58,7 +60,6 @@ export class PersonaPageComponent {
               this.snackBar.open('On Last Page.', 'Ok', { "duration": 4000 });
               return;
             }
-            console.log(response.data);
             this.dataSource = new MatTableDataSource<Persona>(response.data);
             this.loading = false;
 

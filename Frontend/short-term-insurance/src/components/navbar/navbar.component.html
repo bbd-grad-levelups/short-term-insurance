@@ -18,10 +18,9 @@
     class="nav-bar"
   >
     <div>
-      <article [routerLink]="[{ outlets: { navBar: ['persona'] } }]">
-        <img src="logo.svg" alt="logo" />
-        <p>Expense <span>Manager</span></p>
-      </article>
+      <app-logo
+        [routerLink]="[{ outlets: { navBar: ['persona'] } }]"
+      ></app-logo>
       <h1>
         {{ StoreName | slice : 0 : 25 }}
         @if (StoreName.length > 25) {
@@ -39,7 +38,11 @@
           </span>
         </a>
 
-        <a mat-list-item [routerLink]="[{ outlets: { navBar: ['logs'] } }]">
+        <a
+          mat-list-item
+          [routerLink]="[{ outlets: { navBar: ['logs'] } }]"
+          routerLinkActive="active"
+        >
           <span class="link">
             <span>Logs</span>
           </span>

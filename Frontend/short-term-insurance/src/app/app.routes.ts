@@ -4,34 +4,34 @@ import { LoginPageComponent } from '../pages/login-page/login-page.component';
 import { NavbarComponent } from '../components/navbar/navbar.component';
 
 export const routes: Routes = [
-    {
-        path: '',
-        pathMatch: 'full',
-        redirectTo: 'login'
+  {
+    path: '',
+    pathMatch: 'full',
+    redirectTo: 'home'
+  },
+  {
+    path: 'login',
+    component: LoginPageComponent
+  },
+  {
+    path: 'home',
+    component: NavbarComponent,
+    // canActivateChild: [AuthGuard],
+    children: [
+      {
+        path: 'persona',
+        component: PersonaPageComponent,
+        outlet: 'navBar'
       },
       {
-        path: 'login',
-        component: LoginPageComponent
+        path: 'logs',
+        component: PersonaPageComponent,
+        outlet: 'navBar'
       },
-      {
-        path: 'home',
-        component: NavbarComponent,
-        // canActivateChild: [AuthGuard],
-        children: [
-          {
-            path: 'persona',
-            component: PersonaPageComponent,
-            outlet: 'navBar'
-          },
-          {
-            path: 'logs',
-            component: PersonaPageComponent,
-            outlet: 'navBar'
-          },
-        ]
-      },
-      {
-        path: '**',
-        redirectTo: 'login'
-      }
+    ]
+  },
+  {
+    path: '**',
+    redirectTo: 'home'
+  }
 ];

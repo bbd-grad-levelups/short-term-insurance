@@ -5,24 +5,23 @@ import { NavigationEnd, Router, RouterLink, RouterModule, RouterOutlet } from "@
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { MatToolbarModule } from "@angular/material/toolbar";
-import { NgClass, NgIf, NgStyle, SlicePipe } from "@angular/common";
+import { SlicePipe } from "@angular/common";
 import { BreakpointObserver } from "@angular/cdk/layout";
+import { LogoComponent } from '../logo/logo.component';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
   imports: [
+    LogoComponent,
     RouterOutlet,
     MatIconModule,
     MatButtonModule,
     MatToolbarModule,
     MatSidenavModule,
     MatListModule,
-    NgClass,
-    NgIf,
     RouterLink,
     RouterModule,
-    NgStyle,
     SlicePipe,
   ],
   templateUrl: './navbar.component.html',
@@ -39,7 +38,7 @@ export class NavbarComponent implements OnInit, AfterViewInit {
     private router: Router,
     private observer: BreakpointObserver,
     private changeDetectorRef: ChangeDetectorRef,
-  ) {}
+  ) { }
 
   ngAfterViewInit() {
     this.changeDetectorRef.detectChanges();
@@ -57,7 +56,6 @@ export class NavbarComponent implements OnInit, AfterViewInit {
   }
 
   private refreshSetup() {
-    // save path to localstorage
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         const currentRoute = this.router.url;
@@ -65,7 +63,6 @@ export class NavbarComponent implements OnInit, AfterViewInit {
       }
     });
 
-    // navigate to last path visited.
     const lastVisitedRoute = sessionStorage.getItem('lastVisitedRoute');
     if (lastVisitedRoute) {
       this.router.navigateByUrl(lastVisitedRoute);

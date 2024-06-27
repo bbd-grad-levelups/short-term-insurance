@@ -1,6 +1,5 @@
 @if (!error&& dataSource?.data?.length){
 <article class="container">
-  <section class="mat-elevation-z8">
     <h3>Personas</h3>
     @if (loading){
     <mat-spinner></mat-spinner>
@@ -29,29 +28,26 @@
     } @if (dataSource.data.length){
     <section class="pagination">
       <button
-        aria-label="Previous"
-        mat-flat-button
         color="primary"
         appPreventDoubleClick
         (debounceClick)="previousPage()"
+        mat-icon-button
+        aria-label="Example icon button with a vertical three dot icon"
       >
-        <mat-icon fontIcon="arrow_back_ios"></mat-icon>
-        Previous Page
+        <mat-icon>arrow_back_ios</mat-icon>
       </button>
       <span>Page {{ page }}</span>
       <button
-        aria-label="Next"
-        mat-flat-button
         color="primary"
         appPreventDoubleClick
         (debounceClick)="nextPage()"
+        mat-icon-button
+        aria-label="Example icon button with a vertical three dot icon"
       >
-        Next Page
-        <mat-icon fontIcon="arrow_forward_ios" iconPositionEnd></mat-icon>
+        <mat-icon>arrow_forward_ios</mat-icon>
       </button>
     </section>
     }
-  </section>
 </article>
 
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { Observable, of } from "rxjs";
+import { delay } from 'rxjs/operators';
 import { environment } from '../../environment';
 import { ApiResponse } from '../models/api-response.model';
 import { Persona } from '../models/persona.model';
@@ -25,6 +26,6 @@ export class InsuranceService {
       ]
     };
 
-    return of(mockData);
+    return of(mockData).pipe(delay(1000));
   }
 }
