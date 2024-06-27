@@ -1,7 +1,7 @@
 
 namespace Backend.Models;
 
-public class DividendsResponse(string reference)
+public class DividendsResponse(string referenceId)
 {
-  public string Reference { get; set; } = reference;
+  public string ReferenceId { get; set; } = referenceId;
 }

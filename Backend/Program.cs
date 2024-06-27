@@ -1,17 +1,18 @@
-using Microsoft.EntityFrameworkCore;
-using Backend.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Text.Json;
-using Backend.Helpers.Cognito;
 using Microsoft.OpenApi.Models;
-using Backend.Helpers;
+
 using System.Reflection;
+using System.Text.Json;
+
+using Backend.Helpers.Cognito;
+using Backend.Helpers;
+using Backend.Models;
 
 using Hangfire;
 using Hangfire.PostgreSql;
 using Backend.Helpers.Jobs;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,7 +60,6 @@ builder.Services.AddHangfire(config =>
   config.UsePostgreSqlStorage(builder.Configuration.GetConnectionString("DefaultConnection"));// Use in-memory storage for demo purposes
 });
 
-
 builder.Services.AddCors(options =>
 {
   options.AddPolicy("CORS", builder =>
@@ -94,27 +94,35 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddLogging();
 builder.Services.AddScoped<ICognitoService, CognitoService>();
+builder.Services.AddSingleton<ISimulationService, SimulationService>();
 builder.Configuration.Bind("BankingServiceSettings", new BankingServiceSettings());
 builder.Configuration.Bind("StockExchangeSettings", new StockExchangeSettings());
 builder.Services.Configure<BankingServiceSettings>(builder.Configuration.GetSection("BankingServiceSettings"));
-builder.Services.Configure<StockExchangeSettings>(builder.Configuration.GetSection("StockExchangeSetting"));
+builder.Services.Configure<StockExchangeSettings>(builder.Configuration.GetSection("StockExchangeSettings"));
 
 builder.Services.AddHttpClient<IBankingService, BankingService>();
-builder.Services.AddHttpClient<IStockExchangeService, StockExchangeService>(); 
+builder.Services.AddHttpClient<IStockExchangeService, StockExchangeService>();
+builder.Services.AddScoped<HangfireJobs>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+app.UseHangfireServer();
+
 if (app.Environment.IsDevelopment())
 {
   app.UseSwagger();
   app.UseSwaggerUI();
+  app.UseHangfireDashboard();
 }
-// Configure Hangfire server and dashboard
-app.UseHangfireServer();
-app.UseHangfireDashboard();
+var serviceProvider = app.Services;
+using (var scope = serviceProvider.CreateScope())
+{
+  var hangfireJobs = scope.ServiceProvider.GetRequiredService<HangfireJobs>();
 
-RecurringJob.AddOrUpdate<HangfireJobs>("RegisterCompany", x => x.RegisterCompany(100), Cron.MinuteInterval(1));
+  RecurringJob.AddOrUpdate("TimeStep", () => hangfireJobs.TimeStep(), "*/5 * * * *");
+  RecurringJob.AddOrUpdate("Registration", () => hangfireJobs.RegisterCompany(100), Cron.Minutely);
+}
+
 app.UseHttpsRedirection();
 
 app.UseCors("CORS");

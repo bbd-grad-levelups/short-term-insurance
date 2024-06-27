@@ -14,6 +14,11 @@ namespace Backend.Controllers
     private readonly ILogger<InsuranceController> _logger = logger;
     private readonly IBankingService _banking = banking;
 
+    /// <summary>
+    /// Callback endpoint for registering business on the stock exchange.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     [HttpPost("registered")]
     public async Task<ActionResult> ReceiveStockRegistration([FromBody] RegisterStockResponse request)
     {
@@ -21,10 +26,15 @@ namespace Backend.Controllers
       return Ok();
     }
 
+    /// <summary>
+    /// Callback endpoint for receiving payment reference to sell stock.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     [HttpPost("dividends")]
     public async Task<ActionResult> ReceiveDividendsReference([FromBody] DividendsResponse request)
     {
-      _banking.MakeCommercialPayment(request.Reference);
+      await _banking.MakeCommercialPayment(request.ReferenceId);
       return Ok();
     }
   }

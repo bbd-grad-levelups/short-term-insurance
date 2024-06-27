@@ -8,18 +8,17 @@ namespace Backend.Helpers;
 
 public class StockExchangeSettings
 {
-    public string ExchangeKey { get; set; }
-    public string ExchangeEndpoint { get; set; }
+    public string? ExchangeKey { get; set; }
+    public string? ExchangeEndpoint { get; set; }
 }
 
-// record DebitOrderBody(long PersonaId, string CommercialAccount, double Amount);
 record RegisterBody(string Name, string BankAccount);
 record StockSaleBody(string Company, int Amount);
 record DividendsBody(string Company, float Dividends);
 
 public interface IStockExchangeService
 {
-  Task RegisterCompany(int amount);
+  Task RegisterCompany();
   Task SellStock(int amount);
   Task RequestDividends(float profit);
 }
@@ -33,8 +32,8 @@ public class StockExchangeService : IStockExchangeService
 
   public StockExchangeService(HttpClient httpClient, IOptions<StockExchangeSettings> options, ILogger<StockExchangeService> logger)
   {
-    _exchangeEndpoint = options.Value.ExchangeEndpoint;
-    _exchangeKey = options.Value.ExchangeKey;
+    _exchangeEndpoint = options.Value.ExchangeEndpoint ?? throw new Exception("StockExchange settings not found");
+    _exchangeKey = options.Value.ExchangeKey ?? throw new Exception("StockExchange settings not found");
     _logger = logger;
 
     _httpClient = httpClient;
@@ -42,7 +41,7 @@ public class StockExchangeService : IStockExchangeService
     _httpClient.DefaultRequestHeaders.Add("origin-service", "ShortTermInsurance");
   }
 
-  public async Task RegisterCompany(int amount)
+  public async Task RegisterCompany()
   {
     _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("x-api-key", _exchangeKey);
 

@@ -31,12 +31,12 @@ public class BankingService : IBankingService
 
   public BankingService(HttpClient httpClient, IOptions<BankingServiceSettings> options, ILogger<BankingService> logger)
   {
-    _retailEndpoint = options.Value.RetailEndpoint;
-    _commercialEndpoint = options.Value.CommercialEndpoint;
-    _companyAccount = options.Value.CompanyAccount;
-    _retailKey = options.Value.RetailKey;
-    _commercialKey = options.Value.CommercialKey;
-    _companyAccount = options.Value.CompanyAccount;
+    _retailEndpoint = options.Value.RetailEndpoint ?? throw new Exception("BankingService settings not found");
+    _commercialEndpoint = options.Value.CommercialEndpoint ?? throw new Exception("BankingService settings not found");
+    _companyAccount = options.Value.CompanyAccount ?? throw new Exception("BankingService settings not found");
+    _retailKey = options.Value.RetailKey ?? throw new Exception("BankingService settings not found");
+    _commercialKey = options.Value.CommercialKey ?? throw new Exception("BankingService settings not found");
+    _companyAccount = options.Value.CompanyAccount ?? throw new Exception("BankingService settings not found");
     _logger = logger;
 
     _httpClient = httpClient;
