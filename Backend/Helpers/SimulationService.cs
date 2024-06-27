@@ -2,30 +2,24 @@ namespace Backend.Helpers;
 
 public record TimeEvents(bool NewMonth, bool NewYear);
 
-public interface ISimulationService 
+public interface ISimulationService
 {
   bool IsRunning { get; set; }
   string CurrentDate { get; set; }
 
   void StartSim();
-  //TimeEvents SetDate(string newDate);
   TimeEvents UpdateDate();
   void Reset();
-
 }
 
-public class SimulationService() : ISimulationService
+public class SimulationService(ILogger<SimulationService> logger) : ISimulationService
 {
+  private readonly ILogger<SimulationService> _logger = logger;
+
   internal DateTime simStart;
   public string CurrentDate { get; set; } = "01|01|01";
 
   public bool IsRunning { get; set; } = false;
-
-  //public TimeEvents SetDate(string newDate)
-  //{
-  //  simStart = CalculateStartTime(newDate);
-  //  return new TimeEvents(false, false);
-  //}
 
   public TimeEvents UpdateDate()
   {
@@ -50,17 +44,6 @@ public class SimulationService() : ISimulationService
     string formattedDate = $"{years:00}|{months + 1:00}|{days + 1:00}";
     return formattedDate;
   }
-
-  //internal DateTime CalculateStartTime(string simDate)
-  //{
-  //  var parts = simDate.Split('|');
-  //  int years = int.Parse(parts[0]) - 1;
-  //  int months = int.Parse(parts[1]) - 1; // Subtract 1 to convert to zero-based index
-  //  int days = int.Parse(parts[2]) - 1;   // Subtract 1 to convert to zero-based index
-  //  int simDaysPassed = years * 12 * 30 + months * 30 + days;
-
-  //  return DateTime.Now - TimeSpan.FromMinutes(simDaysPassed * 2);
-  //}
 
   public TimeEvents CompareDates(string oldDate, string newDate)
   {

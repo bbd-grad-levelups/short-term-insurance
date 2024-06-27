@@ -8,11 +8,11 @@ using System.Text.Json;
 
 using Backend.Helpers.Cognito;
 using Backend.Helpers;
-using Backend.Models;
 
 using Hangfire;
 using Hangfire.PostgreSql;
 using Backend.Helpers.Jobs;
+using Backend.Contexts;
 
 var builder = WebApplication.CreateBuilder(args);
 

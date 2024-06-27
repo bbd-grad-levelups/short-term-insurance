@@ -3,7 +3,6 @@ using Newtonsoft.Json;
 using System.Net.Http.Headers;
 
 using Microsoft.Extensions.Options;
-using Backend.Models;
 
 namespace Backend.Helpers;
 
@@ -11,12 +10,22 @@ record DebitOrderBody(long PersonaId, string CommercialAccount, double Amount);
 record CommercialPaymentBody(string account, string CommercialAccount, double Amount);
 record CommercialReferenceBody(string reference);
 
+public class BankingServiceSettings
+{
+  public string? RetailKey { get; set; }
+  public string? CommercialKey { get; set; }
+  public string? CompanyAccount { get; set; }
+  public string? RetailEndpoint { get; set; }
+  public string? CommercialEndpoint { get; set; }
+}
+
 public interface IBankingService
 {
   Task CreateRetailDebitOrder(long personaId, double amount);
   Task MakeCommercialPayment(string account, double amount);
   Task MakeCommercialPayment(long personaId, double amount);
   Task MakeCommercialPayment(string reference);
+  Task<float> RequestProfit();
 }
 
 public class BankingService : IBankingService
@@ -122,5 +131,27 @@ public class BankingService : IBankingService
 
     var response = await _httpClient.SendAsync(request);
     _logger.LogInformation(response.ToString() + "/n" + response.Content.ToString());
+  }
+
+  public async Task<float> RequestProfit()
+  {
+    _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("x-api-key", _commercialKey);
+
+    var body = new CommercialReferenceBody("");
+    var json = JsonConvert.SerializeObject(body);
+
+    var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+    string apiUrl = _commercialEndpoint + "/pay/reference";
+    var request = new HttpRequestMessage(HttpMethod.Post, apiUrl)
+    {
+      Content = content
+    };
+
+    var response = await _httpClient.SendAsync(request);
+    _logger.LogInformation(response.ToString() + "/n" + response.Content.ToString());
+
+    return float.Parse(response.Content.ToString());
   }
 }
