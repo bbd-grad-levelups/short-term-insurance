@@ -1,0 +1,84 @@
+# name: Release CD
+
+# on:
+#   workflow_call: 
+#     inputs:
+#       aws-role:
+#         required: true
+#         type: string
+#       account-id:
+#         required: true
+#         type: string
+#       db-name:
+#         required: true
+#         type: string
+
+# permissions:
+#   contents: write
+#   security-events: write
+#   id-token: write
+
+# jobs:
+#   frontend-deploy:
+#     name: Frontend Deploy
+#     runs-on: ubuntu-latest
+#     steps:
+#     - name: Checkout Repository
+#       uses: actions/checkout@v4
+
+#     - name: Configure AWS Credentials
+#       uses: aws-actions/configure-aws-credentials@v4
+#       with:
+#         role-to-assume: ${{ inputs.aws-role }}
+#         aws-region: "eu-west-1"
+#         role-session-name: GitHub_to_AWS_via_FederatedOIDC
+
+#     - name: Build
+#       working-directory: ./Frontend/xxx
+#       run: |
+#         npm install
+#         npm run deploy
+
+#     - name: Upload new Frontend Files
+#       run: |
+#         aws s3 rm --recursive s3://${{ inputs.account-id  }}-${{ inputs.db-name }}
+#         aws s3 cp ./Frontend/xxx/dist/xxx/browser s3://${{ inputs.account-id  }}-${{ inputs.db-name }} --recursive
+
+
+#   api-deploy:
+#     name: API Deploy
+#     runs-on: ubuntu-latest
+#     steps:
+#     - name: Checkout Repository
+#       uses: actions/checkout@v4
+
+#     - name: Configure AWS Credentials
+#       uses: aws-actions/configure-aws-credentials@v4
+#       with:
+#         role-to-assume: ${{ inputs.aws-role }}
+#         aws-region: "eu-west-1"
+#         role-session-name: GitHub_to_AWS_via_FederatedOIDC
+
+#     - name: Setup .NET
+#       uses: actions/setup-dotnet@v4
+#       with:
+#         dotnet-version: 8.0.x
+
+#     - name: Publish API
+#       working-directory: ./
+#       run: dotnet publish -c Release --output ./Bundle/api
+
+#     - name: Create ZIP Package
+#       working-directory: ./Bundle
+#       run: |
+#         zip -r deploy_package.zip .
+
+#     - name: Upload API Package
+#       working-directory: ./Bundle
+#       run: aws s3 cp deploy_package.zip s3://${{ inputs.account-id  }}-deploy-bucket
+
+#     - name: Create New API Version
+#       run: aws elasticbeanstalk create-application-version --application-name api-app --source-bundle S3Bucket="${{ inputs.account-id  }}-deploy-bucket",S3Key="deploy_package.zip" --version-label "deploy-${{ github.sha }}" --description "commit-sha-${{ github.sha }}"
+
+#     - name: Deploy API
+#       run: aws elasticbeanstalk update-environment --environment-name api-env --version-label "deploy-${{ github.sha }}"
