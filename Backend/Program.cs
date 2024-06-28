@@ -77,7 +77,7 @@ builder.Services.AddCors(options =>
 {
   options.AddPolicy("CORS", builder =>
   {
-    builder.WithOrigins(["http://localhost:4200"])
+    builder.WithOrigins(["http://localhost:4200", "https://insurance.projects.bbdgrad.com"])
           .WithHeaders(["Content-Type", "Authorization"])
           .WithMethods([HttpMethods.Get, HttpMethods.Post, HttpMethods.Delete, HttpMethods.Options]).Build();
   });
@@ -96,11 +96,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
           return keys!;
         },
 
-        ValidIssuer = builder.Configuration["COGNITO_ISSUER"] ?? throw new Exception("No COGNITO_ISSUER found"),
+        ValidIssuer = "https://cognito-idp.eu-west-1.amazonaws.com/eu-west-1_XSvVKLZFJ",
         ValidateIssuerSigningKey = true,
         ValidateIssuer = true,
         ValidateLifetime = true,
-        ValidAudience = builder.Configuration["COGNITO_AUDIENCE"] ?? throw new Exception("No COGNITO_AUDIENCE found"),
+        ValidAudience = "3bg09ucl23vla92ug243bnmqft",
         ValidateAudience = false
       };
     });
@@ -131,12 +131,13 @@ using (var scope = serviceProvider.CreateScope())
   RecurringJob.AddOrUpdate("Registration", () => hangfireJobs.RegisterCompany(100), Cron.Minutely);
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseCors("CORS");
 app.UseAuthorization();
 app.UseAuthentication();
 
-app.MapControllers().AllowAnonymous();
+app.MapGet("/", () => "Health is ok!").AllowAnonymous();
+app.MapControllers();
 
 app.Run();
