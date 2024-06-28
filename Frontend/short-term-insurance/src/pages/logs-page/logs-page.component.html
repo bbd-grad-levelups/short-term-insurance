@@ -1,4 +1,50 @@
-<section>
-    <p>Logs page commit to prevent future merge conflicts</p>
 
-</section>
+@if (!error&& dataSource?.data?.length){
+    <article class="container">
+        <h3>Logs</h3>
+        @if (loading){
+        <mat-spinner></mat-spinner>
+        } @else{
+        <table mat-table [dataSource]="dataSource">
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef>Date</th>
+            <td mat-cell *matCellDef="let element">{{ element.date }}</td>
+          </ng-container>
+    
+          <ng-container matColumnDef="message">
+            <th mat-header-cell *matHeaderCellDef>Message</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.message }}
+            </td>
+          </ng-container>
+    
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+        } @if (dataSource.data.length){
+        <section class="pagination">
+          <button
+            color="primary"
+            appPreventDoubleClick
+            (debounceClick)="previousPage()"
+            mat-icon-button
+            aria-label="Example icon button with a vertical three dot icon"
+          >
+            <mat-icon>arrow_back_ios</mat-icon>
+          </button>
+          <span>Page {{ page }}</span>
+          <button
+            color="primary"
+            appPreventDoubleClick
+            (debounceClick)="nextPage()"
+            mat-icon-button
+            aria-label="Example icon button with a vertical three dot icon"
+          >
+            <mat-icon>arrow_forward_ios</mat-icon>
+          </button>
+        </section>
+        }
+    </article>
+    
+    }
+    

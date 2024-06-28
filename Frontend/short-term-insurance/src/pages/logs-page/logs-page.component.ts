@@ -8,6 +8,8 @@ import { PreventDoubleClick } from '../../directives/prevent-double-click.direct
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Persona } from '../../models/persona.model';
+import { Logs } from '../../models/logs.model';
+import { LogsService } from '../../services/logs.service';
 
 
 @Component({
@@ -26,27 +28,27 @@ export class LogsPageComponent {
     new MatPaginatorIntl(), ChangeDetectorRef.prototype
   );
 
-  dataSource: MatTableDataSource<Persona> = new MatTableDataSource<Persona>();
+  dataSource: MatTableDataSource<Logs> = new MatTableDataSource<Logs>();
 
-  displayedColumns: string[] = ['Persona'];
+  displayedColumns: string[] = ['date', 'message'];
   error: boolean = false;
   loading: boolean = true;
   isLastPage: boolean = false;
   page: number = 1;
 
   constructor(
-    private insuranceService: InsuranceService,
+    private logsService: LogsService,
     private snackBar: MatSnackBar 
   ) {}
 
   ngOnInit() {
-    this.getPersonaData();
+    this.getLogsData();
   }
 
-  getPersonaData(nextPage: boolean = false) {
+  getLogsData(nextPage: boolean = false) {
     this.error = false;
     this.loading = true;
-    this.insuranceService.getPersonas(this.page)
+    this.logsService.getLogs(this.page)
       .subscribe({
         next: response => {
           if (response.success) {
@@ -57,7 +59,7 @@ export class LogsPageComponent {
               return;
             }
 
-            this.dataSource = new MatTableDataSource<Persona>(response.data);
+            this.dataSource = new MatTableDataSource<Logs>(response.data);
             this.loading = false;
 
           } else {
@@ -80,12 +82,12 @@ export class LogsPageComponent {
       return;
     }
     this.page--;
-    this.getPersonaData()
+    this.getLogsData()
   }
 
   nextPage() {
     this.page++;
-    this.getPersonaData(true)
+    this.getLogsData(true)
   }
 
 }
