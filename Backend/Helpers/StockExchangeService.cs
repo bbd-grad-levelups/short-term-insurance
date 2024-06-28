@@ -27,13 +27,11 @@ public class StockExchangeService : IStockExchangeService
 {
   private readonly HttpClient _httpClient;
   private readonly ILogger<StockExchangeService> _logger;
-  private readonly string _exchangeEndpoint;
-  internal string _exchangeKey;
+  private readonly string _exchangeEndpoint = "https://api.commercialbank.projects.bbdgrad.com";
+  internal string _exchangeKey = "your_exchange_key_here";
 
-  public StockExchangeService(HttpClient httpClient, IOptions<StockExchangeSettings> options, ILogger<StockExchangeService> logger)
+  public StockExchangeService(HttpClient httpClient, ILogger<StockExchangeService> logger)
   {
-    _exchangeEndpoint = options.Value.ExchangeEndpoint ?? throw new Exception("StockExchange settings not found");
-    _exchangeKey = options.Value.ExchangeKey ?? throw new Exception("StockExchange settings not found");
     _logger = logger;
 
     _httpClient = httpClient;

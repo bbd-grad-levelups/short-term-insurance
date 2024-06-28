@@ -13,11 +13,24 @@ using Hangfire;
 using Hangfire.PostgreSql;
 using Backend.Helpers.Jobs;
 using Backend.Contexts;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var connectionStringBuilder = new NpgsqlConnectionStringBuilder
+{
+  Host = builder.Configuration["DB_URL"] ?? throw new Exception("No DB_URL found"),
+  Password = builder.Configuration["DB_PASSWORD"] ?? throw new Exception("No DB_PASSWORD found"),
+  Username = builder.Configuration["DB_USERNAME"] ?? throw new Exception("No DB_USERNAME found"),
+  Port = NpgsqlConnection.DefaultPort,
+  Database = builder.Configuration["DB_DATABASE"] ?? "sti",
+  Pooling = true,
+  MaxPoolSize = 20,
+};
+string connectionString = connectionStringBuilder.ConnectionString;
+
 builder.Services.AddControllers();
-builder.Services.AddDbContext<PersonaContext>(opt => opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<PersonaContext>(opt => opt.UseNpgsql(connectionString));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -57,7 +70,7 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddHangfire(config =>
 {
-  config.UsePostgreSqlStorage(builder.Configuration.GetConnectionString("DefaultConnection"));// Use in-memory storage for demo purposes
+  config.UsePostgreSqlStorage(connectionString);
 });
 
 builder.Services.AddCors(options =>
@@ -95,11 +108,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddLogging();
 builder.Services.AddScoped<ICognitoService, CognitoService>();
 builder.Services.AddSingleton<ISimulationService, SimulationService>();
-builder.Configuration.Bind("BankingServiceSettings", new BankingServiceSettings());
-builder.Configuration.Bind("StockExchangeSettings", new StockExchangeSettings());
-builder.Services.Configure<BankingServiceSettings>(builder.Configuration.GetSection("BankingServiceSettings"));
-builder.Services.Configure<StockExchangeSettings>(builder.Configuration.GetSection("StockExchangeSettings"));
-
 builder.Services.AddHttpClient<IBankingService, BankingService>();
 builder.Services.AddHttpClient<IStockExchangeService, StockExchangeService>();
 builder.Services.AddScoped<HangfireJobs>();

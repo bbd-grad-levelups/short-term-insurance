@@ -32,20 +32,14 @@ public class BankingService : IBankingService
 {
   private readonly HttpClient _httpClient;
   private readonly ILogger<BankingService> _logger;
-  private readonly string _retailEndpoint;
-  internal string _commercialEndpoint;
-  internal string _companyAccount;
-  internal string _retailKey;
-  internal string _commercialKey;
+  private readonly string _retailEndpoint = "https://api.commercialbank.projects.bbdgrad.com";
+  internal string _commercialEndpoint = "https://api.commercialbank.projects.bbdgrad.com";
+  internal string _companyAccount = "short-term-insurance";
+  internal string _retailKey = "none";
+  internal string _commercialKey = "none";
 
-  public BankingService(HttpClient httpClient, IOptions<BankingServiceSettings> options, ILogger<BankingService> logger)
+  public BankingService(HttpClient httpClient, ILogger<BankingService> logger)
   {
-    _retailEndpoint = options.Value.RetailEndpoint ?? throw new Exception("BankingService settings not found");
-    _commercialEndpoint = options.Value.CommercialEndpoint ?? throw new Exception("BankingService settings not found");
-    _companyAccount = options.Value.CompanyAccount ?? throw new Exception("BankingService settings not found");
-    _retailKey = options.Value.RetailKey ?? throw new Exception("BankingService settings not found");
-    _commercialKey = options.Value.CommercialKey ?? throw new Exception("BankingService settings not found");
-    _companyAccount = options.Value.CompanyAccount ?? throw new Exception("BankingService settings not found");
     _logger = logger;
 
     _httpClient = httpClient;
