@@ -428,9 +428,6 @@ replay_pid*
 # Local .terraform directories
 **/.terraform/*
 
-# Angular/VS code sln files
-*.sln
-
 # .tfstate files
 *.tfstate
 *.tfstate.*

@@ -34,9 +34,18 @@ jobs:
       aws-role: ${{ vars.AWS_ROLE }}
       db-name: ${{ vars.DB_NAME }}
 
+  database-migration:
+    name: "Liquibase update"
+    needs: test-database-migration
+    secrets: inherit
+    uses: ./.github/workflows/liquibase-cd.yaml 
+    with:
+      aws-role: ${{ vars.AWS_ROLE }}
+      db-name: ${{ vars.DB_NAME }} 
+
   release-cd:
     name: "Deploy/Release API,Web"
-    needs: test-database-migration
+    needs: database-migration
     secrets: inherit
     uses: ./.github/workflows/release-cd.yaml  
     with:
