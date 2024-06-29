@@ -133,14 +133,14 @@ resource "aws_api_gateway_stage" "frontend_api" {
   stage_name    = "frontend"
 }
 
-resource "aws_api_gateway_base_path_mapping" "example" {
+resource "aws_api_gateway_base_path_mapping" "frontend_api" {
   api_id      = aws_api_gateway_rest_api.frontend_api.id
   stage_name  = aws_api_gateway_stage.frontend_api.stage_name
   domain_name = aws_api_gateway_domain_name.frontend_api.domain_name
 }
 
 ##############################################################
-# Frontend APIGW with cognito auth
+# Partner APIGW with mTLS
 ##############################################################
 resource "aws_api_gateway_domain_name" "partner_api" {
   domain_name              = "api.${var.domain_name}"
@@ -149,4 +149,91 @@ resource "aws_api_gateway_domain_name" "partner_api" {
   endpoint_configuration {
     types = ["REGIONAL"]
   }
+
+  mutual_tls_authentication {
+    truststore_uri = "s3://miniconomy-trust-store-bucket/truststore.pem"
+  }
+}
+
+resource "aws_api_gateway_rest_api" "partner_api" {
+  name = "partner"
+  body = jsonencode({
+    "openapi" : "3.0.1",
+    "info" : {
+      "title" : "partner",
+      "version" : "1.0"
+    },
+    "servers" : [ {
+      "url" : "https://api.insurance.projects.bbdgrad.com",
+      "x-amazon-apigateway-endpoint-configuration" : {
+        "disableExecuteApiEndpoint" : true
+      }
+    } ],
+    "paths" : {
+      "/" : {
+        "get" : {
+          "x-amazon-apigateway-integration" : {
+            "connectionId" : aws_api_gateway_vpc_link.nlb.id,
+            "httpMethod" : "GET",
+            "uri" : "http://${data.aws_lb.nlb.dns_name}",
+            "passthroughBehavior" : "when_no_match",
+            "connectionType" : "VPC_LINK",
+            "type" : "http_proxy"
+          }
+        }
+      },
+      "/{proxy+}" : {
+        "x-amazon-apigateway-any-method" : {
+          "parameters" : [ {
+            "name" : "proxy",
+            "in" : "path",
+            "required" : true,
+            "schema" : {
+              "type" : "string"
+            }
+          } ],
+          "x-amazon-apigateway-integration" : {
+            "connectionId" : aws_api_gateway_vpc_link.nlb.id,
+            "httpMethod" : "ANY",
+            "uri" : "http://${data.aws_lb.nlb.dns_name}/{proxy}",
+            "passthroughBehavior" : "when_no_match",
+            "connectionType" : "VPC_LINK",
+            "type" : "http_proxy",
+            "requestParameters" : {
+              "integration.request.path.proxy" : "method.request.path.proxy"
+            }
+          }
+        }
+      }      
+    },
+    "components" : {}
+  })
+
+  endpoint_configuration {
+    types = ["REGIONAL"]
+  }
+}
+
+resource "aws_api_gateway_deployment" "partner_api" {
+  rest_api_id = aws_api_gateway_rest_api.partner_api.id
+
+  triggers = {
+    redeployment = sha1(jsonencode(aws_api_gateway_rest_api.partner_api.body))
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_api_gateway_stage" "partner_api" {
+  deployment_id = aws_api_gateway_deployment.partner_api.id
+  rest_api_id   = aws_api_gateway_rest_api.partner_api.id
+  stage_name    = "partner"
+}
+
+resource "aws_api_gateway_base_path_mapping" "partner_api" {
+  api_id      = aws_api_gateway_rest_api.partner_api.id
+  stage_name  = aws_api_gateway_stage.partner_api.stage_name
+  domain_name = aws_api_gateway_domain_name.partner_api.domain_name
 }
