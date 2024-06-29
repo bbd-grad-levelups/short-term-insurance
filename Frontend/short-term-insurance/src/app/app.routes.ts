@@ -2,7 +2,8 @@ import { Routes } from '@angular/router';
 import { PersonaPageComponent } from '../pages/persona-page/persona-page.component';
 import { LoginPageComponent } from '../pages/login-page/login-page.component';
 import { NavbarComponent } from '../components/navbar/navbar.component';
-import {AuthGuard} from "../services/auth-guard.service";
+import { LogsPageComponent } from '../pages/logs-page/logs-page.component';
+import { AuthGuard } from "../services/auth-guard.service";
 
 export const routes: Routes = [
   {
@@ -26,7 +27,7 @@ export const routes: Routes = [
       },
       {
         path: 'logs',
-        component: PersonaPageComponent,
+        component: LogsPageComponent,
         outlet: 'navBar'
       },
     ]
