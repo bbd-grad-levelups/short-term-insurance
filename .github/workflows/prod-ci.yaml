@@ -1,8 +1,12 @@
 name: CI
 
+# on:
+#   workflow_call:
+#   pull_request:
+#     branches: [ main ]
+
 on:
-  workflow_call:
-  pull_request:
+  push:
     branches: [ main ]
 
 permissions:
@@ -32,14 +36,4 @@ jobs:
     uses: ./.github/workflows/liquibase-ci.yaml
     with:
       aws-role: ${{ vars.AWS_ROLE }}
-      db-name: ${{ vars.DB_NAME }}
-
-  release-cd:
-    name: "Deploy/Release API,Web"
-    needs: test-database-migration
-    secrets: inherit
-    uses: ./.github/workflows/release-cd.yaml  
-    with:
-      aws-role: ${{ vars.AWS_ROLE }}
-      account-id: ${{ vars.ACCOUNT_ID }}
       db-name: ${{ vars.DB_NAME }}

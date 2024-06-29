@@ -1,8 +1,13 @@
 name: CI/CD
 
 on:
-  push:
+  workflow_call:
+  pull_request:
     branches: [ main ]
+
+# on:
+#   push:
+#     branches: [ main ]
 
 permissions:
   checks: write
