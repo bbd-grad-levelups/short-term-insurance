@@ -86,7 +86,10 @@ resource "aws_api_gateway_rest_api" "frontend_api" {
             "uri" : "http://${data.aws_lb.nlb.dns_name}/{proxy}",
             "passthroughBehavior" : "when_no_match",
             "connectionType" : "VPC_LINK",
-            "type" : "http_proxy"
+            "type" : "http_proxy",
+            "requestParameters" : {
+              "integration.request.path.proxy" : "method.request.path.proxy"
+            }
           }
         }
       }      
@@ -134,4 +137,16 @@ resource "aws_api_gateway_base_path_mapping" "example" {
   api_id      = aws_api_gateway_rest_api.frontend_api.id
   stage_name  = aws_api_gateway_stage.frontend_api.stage_name
   domain_name = aws_api_gateway_domain_name.frontend_api.domain_name
+}
+
+##############################################################
+# Frontend APIGW with cognito auth
+##############################################################
+resource "aws_api_gateway_domain_name" "partner_api" {
+  domain_name              = "api.${var.domain_name}"
+  regional_certificate_arn  = aws_acm_certificate.backend_beanstalk.arn
+
+  endpoint_configuration {
+    types = ["REGIONAL"]
+  }
 }
