@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -6,7 +5,6 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text.Json;
 
-using Backend.Helpers.Cognito;
 using Backend.Helpers;
 
 using Hangfire;
@@ -83,30 +81,7 @@ builder.Services.AddCors(options =>
   });
 });
 
-builder.Services.AddAuthorization();
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-      options.TokenValidationParameters = new TokenValidationParameters
-      {
-        IssuerSigningKeyResolver = (s, securityToken, identifier, parameters) =>
-        {
-          var json = new HttpClient().GetStringAsync(parameters.ValidIssuer + "/.well-known/jwks.json").Result;
-          var keys = JsonSerializer.Deserialize<JsonWebKeySet>(json)?.Keys;
-          return keys!;
-        },
-
-        ValidIssuer = "https://cognito-idp.eu-west-1.amazonaws.com/eu-west-1_XSvVKLZFJ",
-        ValidateIssuerSigningKey = true,
-        ValidateIssuer = true,
-        ValidateLifetime = true,
-        ValidAudience = "3bg09ucl23vla92ug243bnmqft",
-        ValidateAudience = false
-      };
-    });
-
 builder.Services.AddLogging();
-builder.Services.AddScoped<ICognitoService, CognitoService>();
 builder.Services.AddSingleton<ISimulationService, SimulationService>();
 builder.Services.AddHttpClient<IBankingService, BankingService>();
 builder.Services.AddHttpClient<IStockExchangeService, StockExchangeService>();
@@ -131,13 +106,9 @@ using (var scope = serviceProvider.CreateScope())
   RecurringJob.AddOrUpdate("Registration", () => hangfireJobs.RegisterCompany(100), Cron.Minutely);
 }
 
-// app.UseHttpsRedirection();
-
 app.UseCors("CORS");
-app.UseAuthorization();
-app.UseAuthentication();
 
-app.MapGet("/", () => "Health is ok, real API too!").AllowAnonymous();
+app.MapGet("/", () => "Health is ok, real API too!");
 app.MapControllers();
 
 app.Run();
