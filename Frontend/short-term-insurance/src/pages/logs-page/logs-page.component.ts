@@ -1,25 +1,25 @@
 import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
-import {MatTableDataSource, MatTableModule} from "@angular/material/table";
+import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { MatPaginator, MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
-import { InsuranceService } from '../../services/insurance.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatIcon } from '@angular/material/icon';
 import { PreventDoubleClick } from '../../directives/prevent-double-click.directive';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Persona } from '../../models/persona.model';
 import { Logs } from '../../models/logs.model';
 import { LogsService } from '../../services/logs.service';
+import { MatButtonModule } from '@angular/material/button';
 
 
 @Component({
   selector: 'app-logs-page',
   standalone: true,
-  imports: [    PreventDoubleClick,
-    MatPaginatorModule,
-    MatIcon,
-    MatProgressSpinnerModule,
-    MatTableModule],
+  imports: [  MatButtonModule,
+              PreventDoubleClick,
+              MatPaginatorModule,
+              MatIcon,
+              MatProgressSpinnerModule,
+              MatTableModule],
   templateUrl: './logs-page.component.html',
   styleUrl: './logs-page.component.css'
 })

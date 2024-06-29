@@ -20,9 +20,9 @@ export class LogsService {
       success: true,
       message: "Mock data",
       data: [
-        { date: "2024/06/28", message: "This is a temp message"},
-        { date: "2024/06/29", message: "This is another temp message"},
-        { date: "2024/06/30", message: "This is also a temp message"},
+        { date: "2024/06/28", message: "INFO  User 'johndoe' logged in from IP 192.168.8.4"},
+        { date: "2024/06/29", message: "ERROR   User 'ivanC' has insufficient funds to make a claim"},
+        { date: "2024/06/30", message: "INFO  User 'gerniV' logged out successfully"},
       ]
     };
 
