@@ -32,7 +32,7 @@ export class PersonaPageComponent {
 
   dataSource: MatTableDataSource<Persona> = new MatTableDataSource<Persona>();
 
-  displayedColumns: string[] = ['persona', 'numberOfDevices', 'blocked'];
+  displayedColumns: string[] = ['personaId', 'electronics', 'blacklisted'];
   error: boolean = false;
   loading: boolean = true;
   isLastPage: boolean = false;
@@ -53,19 +53,14 @@ export class PersonaPageComponent {
     this.insuranceService.getPersonas(this.page)
       .subscribe({
         next: response => {
-          if (response.success) {
-            this.isLastPage = !response.data.length;
-            if (nextPage && this.isLastPage) {
-              this.page--;
-              this.snackBar.open('On Last Page.', 'Ok', { "duration": 4000 });
-              return;
-            }
-            this.dataSource = new MatTableDataSource<Persona>(response.data);
-            this.loading = false;
-
-          } else {
-            this.error = true;
+          this.isLastPage = !response.length;
+          if (nextPage && this.isLastPage) {
+            this.page--;
+            this.snackBar.open('On Last Page.', 'Ok', { "duration": 4000 });
+            return;
           }
+          this.dataSource = new MatTableDataSource<Persona>(response);
+          this.loading = false;
         },
         error: () => {
           this.error = true;

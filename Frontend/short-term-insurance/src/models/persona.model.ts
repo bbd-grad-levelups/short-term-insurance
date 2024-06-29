@@ -1,5 +1,6 @@
 export interface Persona {
-    persona: string;
-    numberOfDevices: number;
-    blocked: boolean;
+    id: number;
+    personaId: string;
+    electronics: number;
+    blacklisted: boolean;
 }
