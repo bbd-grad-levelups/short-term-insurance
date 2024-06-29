@@ -137,7 +137,7 @@ app.UseCors("CORS");
 app.UseAuthorization();
 app.UseAuthentication();
 
-app.MapGet("/", () => "Health is ok!").AllowAnonymous();
+app.MapGet("/", () => "Health is ok, real API too!").AllowAnonymous();
 app.MapControllers();
 
 app.Run();

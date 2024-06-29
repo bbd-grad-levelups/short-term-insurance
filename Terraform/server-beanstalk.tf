@@ -196,4 +196,16 @@ resource "aws_elastic_beanstalk_environment" "backend_beanstalk" {
     value     = module.rds.db_instance_address
     resource  = ""
   }
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "MTLS_CERT"
+    value     = jsondecode(data.aws_secretsmanager_secret_version.mtls_details.secret_string)["cert"]
+    resource  = ""
+  }
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "MTLS_KEY"
+    value     = jsondecode(data.aws_secretsmanager_secret_version.mtls_details.secret_string)["key"]
+    resource  = ""
+  }
 }
