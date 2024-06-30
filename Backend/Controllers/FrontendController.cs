@@ -5,6 +5,9 @@ using Backend.Contexts;
 
 namespace Backend.Controllers;
 
+public record PersonaPage(IEnumerable<Persona> Personas, int Page, int PageSize, int AvailablePages);
+public record LogsPage(IEnumerable<Log> Logs, int Page, int PageSize, int AvailablePages);
+
 [Route("api")]
 [ApiController]
 public class FrontendController(PersonaContext context, ILogger<FrontendController> logger) : ControllerBase
@@ -23,20 +26,29 @@ public class FrontendController(PersonaContext context, ILogger<FrontendControll
   /// <param name="pageSize">Number of items per page</param>
   /// <returns>A list of personas</returns>
   [HttpGet("personas")]
-  public async Task<ActionResult<IEnumerable<Persona>>> GetPersonas(int page = 1, int pageSize = 50)
+  public async Task<ActionResult<PersonaPage>> GetPersonas(int page = 1, int pageSize = 50)
   {
+    var totalPersonas = await _context.Personas.CountAsync();
+    var totalPages = (int)Math.Ceiling(totalPersonas / (double)pageSize);
     var personas = await _context.Personas
                                 .OrderBy(x => x.PersonaId)
                                 .Skip((page - 1) * pageSize)
                                 .Take(pageSize)
                                 .ToListAsync();
 
+    IEnumerable<Persona> results;
     if (personas.Count == 0)
     {
-      return NotFound();
+      results = Enumerable.Empty<Persona>();
+    }
+    else
+    {
+      results = personas;
     }
 
-    return Ok(personas);
+    var personaPage = new PersonaPage(results, page, pageSize, totalPages);
+
+    return Ok(personaPage);
   }
 
   // Stubbed for now, possible logging endpoint for frontend
@@ -55,7 +67,7 @@ public class FrontendController(PersonaContext context, ILogger<FrontendControll
   /// <param name="pageSize">Number of items per page</param>
   /// <returns>A list of personas</returns>
   [HttpGet("log")]
-  public async Task<ActionResult<IEnumerable<Log>>> GetLog(string beginDate, string endDate, int page = 1, int pageSize = 50)
+  public async Task<ActionResult<LogsPage>> GetLog(string beginDate, string endDate, int page = 1, int pageSize = 50)
   {
     var someLogs = new List<Log>()
     {
@@ -63,7 +75,34 @@ public class FrontendController(PersonaContext context, ILogger<FrontendControll
       new("2024|06|24|15|33|32", "Something else happened")
     };
 
-    return Ok(someLogs);
+
+    int totalLogs = await _context.Personas.CountAsync(); // Just to make "not async" shut up
+    totalLogs = 2;
+    int totalPages = 1;
+    //var totalPages = (int)Math.Ceiling(totalPersonas / (double)pageSize);
+    //var personas = await _context.Personas
+    //                            .OrderBy(x => x.PersonaId)
+    //                            .Skip((page - 1) * pageSize)
+    //                            .Take(pageSize)
+    //                            .ToListAsync();
+
+    //if (personas.Count == 0)
+    //{
+    //  return NotFound();
+    //}
+    IEnumerable<Log> results;
+    if (someLogs.Count == 0)
+    {
+      results = Enumerable.Empty<Log>();
+    }
+    else
+    {
+      results = someLogs;
+    }
+    
+    var logsPage = new LogsPage(results, page, pageSize, totalPages);
+
+    return Ok(logsPage);
   }
 }
 
