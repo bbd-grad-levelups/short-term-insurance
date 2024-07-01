@@ -20,7 +20,7 @@ public class BaseService
 
   internal static HttpClient SetupClient()
   {
-    var cert = Environment.GetEnvironmentVariable("MTLS_CERT_PFX") ?? throw new Exception("Could not load MTLS_CERT_PFX");
+    var cert = Environment.GetEnvironmentVariable("MTLS_CERT") ?? throw new Exception("Could not load MTLS_CERT");
     X509Certificate clientCert = new X509Certificate2(Convert.FromBase64String(cert));
 
     var handler = new HttpClientHandler();

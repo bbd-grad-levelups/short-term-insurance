@@ -1,11 +1,13 @@
 namespace Backend.Services;
 
 record DebitOrderBody(long PersonaId, string CommercialAccount, double Amount);
+record CancelDebitOrderBody(int DebitOrderId);
 record CommercialPaymentBody(string Account, string CommercialAccount, double Amount);
 record CommercialReferenceBody(string Reference);
 
 public interface IBankingService
 {
+  Task CancelDebitOrder(int debitOrderId);
   Task<int> CreateRetailDebitOrder(long personaId, double amount);
   Task MakeCommercialPayment(string account, double amount);
   Task MakeCommercialPayment(long personaId, double amount);
@@ -18,10 +20,16 @@ public class BankingService(ILogger<BankingService> logger) : BaseService, IBank
   private readonly ILogger<BankingService> _logger = logger;
   private readonly string _companyAccount = "short-term-insurance";
 
+  public async Task CancelDebitOrder(int debitOrderId)
+  {
+    var body = new CancelDebitOrderBody(debitOrderId);
+    string apiUrl = $"{_retailEndpoint}/debitorders";
+    
+    var response = await PerformCall(apiUrl, body, HttpMethod.Delete);
+  }
+
   public async Task<int> CreateRetailDebitOrder(long personaId, double amount)
   {
-    // TODO: Cancel existing debit order first! haha
-
     var body = new DebitOrderBody(personaId, _companyAccount, amount);
     string apiUrl = $"{_retailEndpoint}/debit";
     var response = await PerformCall(apiUrl, body, HttpMethod.Post);
