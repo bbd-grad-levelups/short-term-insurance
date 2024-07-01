@@ -23,7 +23,7 @@ resource "aws_secretsmanager_secret" "mtls_details" {
 
 resource "aws_secretsmanager_secret_version" "mtls_details" {
   secret_id     = aws_secretsmanager_secret.mtls_details.id
-  secret_string = jsonencode({key = "dummy", cert = "dummy"})
+  secret_string = jsonencode({ key = "dummy", cert = "dummy" })
 }
 
 data "aws_secretsmanager_secret_version" "mtls_details" {

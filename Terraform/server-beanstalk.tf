@@ -87,7 +87,7 @@ resource "aws_elastic_beanstalk_environment" "backend_beanstalk" {
     name      = "AssociatePublicIpAddress"
     value     = "true"
   }
-    setting {
+  setting {
     namespace = "aws:autoscaling:asg"
     name      = "MinSize"
     value     = 1
