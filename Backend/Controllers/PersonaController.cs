@@ -19,40 +19,41 @@ public class PersonaController(PersonaContext context, IBankingService banking, 
   /// <summary>
   /// Endpoint called when Persona Manager has new info regarding personas in the system.
   /// </summary>
-  /// <param name="whoEvenKnows">The received information from persona</param>
+  /// <param name="personaUpdate">The received information from persona</param>
   /// <returns>Defaults to 204</returns>
   [HttpPost("")]
-  public async Task<ActionResult> ReceivePersonaUpdate([FromBody] string whoEvenKnows)
+  public async Task<ActionResult> ReceivePersonaUpdate([FromBody] PersonaUpdate personaUpdate)
   {
     _logger.LogInformation("Received new persona information");
 
-    List<long> deadPeopleIds = [];
-    // Remove dead people (RemovePersona Functionality)
-    var deadPeopleAwait = _context.Personas.Where((Persona person) => deadPeopleIds.Contains(person.PersonaId)).ToListAsync();
+    List<long> deadPeopleIds = personaUpdate.Deaths.Select(death => death.Deceased).ToList();
+    var deadPeople = await _context.Personas.Where((Persona person) => deadPeopleIds.Contains(person.PersonaId)).ToListAsync();
 
-    // Add next of kin to system
-    List<Persona> nextOfKin = [];
-    List<Persona> newPeople = nextOfKin.Select(newPerson =>
+    List<Persona> newPeople = personaUpdate.Deaths.Select(currentDeath =>
     {
+      var deadPerson = deadPeople.FirstOrDefault(persona => persona.PersonaId == currentDeath.Deceased);
       return new Persona()
       {
-        Electronics = newPerson.Electronics,
-        PersonaId = newPerson.PersonaId,
+        Electronics = deadPerson?.Electronics ?? 0,
+        PersonaId = currentDeath.NextOfKin,
       };
     }).ToList();
 
-    _context.Personas.RemoveRange(await deadPeopleAwait);
-    _context.AddRange(newPeople);
-    var saveChanges = _context.SaveChangesAsync();
-
-    // Create debit orders for each of these new personas (doesn't have to happen synch)
-    newPeople.ForEach(newPerson => 
+    _context.Personas.RemoveRange(deadPeople);
+    
+    // Create debit orders for each of these new personas
+    var additionsTasks = newPeople.Select(async newPerson => 
     {
       var newPremium = Insurance.CalculateInsurance(newPerson.Electronics);
-      _banking.CreateRetailDebitOrder(newPerson.PersonaId, newPremium);
-    });
+      var debitId = await _banking.CreateRetailDebitOrder(newPerson.PersonaId, newPremium);
+      newPerson.DebitOrderId = debitId;
+      return newPerson;
+    }).ToList();
 
-    await saveChanges;
+    var additions = Task.WhenAll(additionsTasks);
+
+    _context.AddRange(newPeople);
+    await _context.SaveChangesAsync();
     return NoContent();
   }
 }
