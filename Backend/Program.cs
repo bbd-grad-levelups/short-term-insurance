@@ -31,9 +31,9 @@ builder.Services.AddControllers();
 builder.Services.AddLogging();
 
 builder.Services.AddSingleton<ISimulationService, SimulationService>();
-builder.Services.AddHttpClient<IBankingService, BankingService>();
-builder.Services.AddHttpClient<IStockExchangeService, StockExchangeService>();
-builder.Services.AddHttpClient<ITaxService, TaxService>();
+builder.Services.AddScoped<IBankingService, BankingService>();
+builder.Services.AddScoped<IStockExchangeService, StockExchangeService>();
+builder.Services.AddScoped<ITaxService, TaxService>();
 
 builder.Services.AddHangfire(config =>
 {

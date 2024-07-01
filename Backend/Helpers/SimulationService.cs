@@ -1,6 +1,4 @@
-using Humanizer;
-
-namespace Backend.Helpers;
+namespace Backend.Services;
 
 public record TimeEvents(bool NewMonth, bool NewYear);
 

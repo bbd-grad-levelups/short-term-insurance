@@ -1,7 +1,8 @@
+using Backend.Contexts;
+using Backend.Models;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Backend.Models;
-using Backend.Contexts;
 
 namespace Backend.Controllers;
 

@@ -1,8 +1,7 @@
-using Backend.Controllers;
-using Backend.Models;
+using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Backend.Helpers.Jobs;
+namespace Backend.Jobs;
 
 public class HangfireJobs(IStockExchangeService stock, IBankingService banking, ISimulationService sim, ILogger<HangfireJobs> logger) : ControllerBase
 {
@@ -10,12 +9,6 @@ public class HangfireJobs(IStockExchangeService stock, IBankingService banking, 
   private readonly ILogger<HangfireJobs> _logger = logger;
   private readonly ISimulationService _simulation = sim;
   private readonly IBankingService _banking = banking;
-
-  public void RegisterCompany(int amount)
-  {
-    _logger.LogInformation($"Registering company with amount: {amount}");
-    _stock.Register();
-  }
 
   public async Task TimeStep()
   {
@@ -34,7 +27,7 @@ public class HangfireJobs(IStockExchangeService stock, IBankingService banking, 
 
       if (events.NewYear)
       {
-        // Not sure if we're even doing anything year related?
+        // pay tax
       }
     }
   }
