@@ -54,36 +54,4 @@ public class BankingController(PersonaContext context, IBankingService banking, 
     }
     else return Ok();
   }
-
-  // Response on request for an updated debit order
-  /// <summary>
-  /// Endpoint to receive response on updating a debit order. (Not finalised)
-  /// </summary>
-  /// <param name="request"></param>
-  /// <returns></returns>
-  [HttpPost("retail")]
-  public async Task<ActionResult> ReceiveRetailBankNotification([FromBody] BankNotification request)
-  {
-    if (request.Message == "Debit update")
-    {
-      if (!request.Success)
-      {
-        // Might need to retry the update, pending what messages they actually have
-      }
-    }
-    else if (request.Message == "Debit payment")
-    {
-      if (request.Success)
-      {
-        // Unblacklist person
-      }
-      else
-      {
-        // blacklist person
-      }
-    }
-    _logger.LogInformation("Retail notification: " + request.ToString());
-
-    return Ok();
-  }
 }
