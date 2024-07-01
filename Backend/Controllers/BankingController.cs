@@ -8,10 +8,10 @@ namespace Backend.Controllers;
 
 [Route("api/banking")]
 [ApiController]
-public class BankingController(PersonaContext context, IBankingService banking, ILogger logger) : ControllerBase
+public class BankingController(PersonaContext context, ISimulationService simulation, ILogger logger) : ControllerBase
 {
   private readonly PersonaContext _context = context;
-  private readonly IBankingService _banking = banking;
+  private readonly ISimulationService _simulation = simulation;
   private readonly ILogger _logger = logger;
 
   // Currently stubbed, pending bank API spec
@@ -23,35 +23,18 @@ public class BankingController(PersonaContext context, IBankingService banking, 
   [HttpPost("commercial")]
   public async Task<ActionResult> ReceiveCommercialBankNotification([FromBody] BankNotification request)
   {
-    // This will basically just be "we failed payment" or "persona failed payment"
-    if (request.Message == "Persona payment")
+    // This is now only for receiving payment notificationss
+    // Stubbed for now. This check will probably use the debitOrderId in the reference.
+    var personaId = request.PersonaId; 
+    var currentPersona = await _context.Personas.FirstOrDefaultAsync(p => p.PersonaId == request.PersonaId);
+    if (currentPersona != null)
     {
-      var currentPersona = await _context.Personas.FirstOrDefaultAsync(p => p.PersonaId == request.PersonaId);
-
-      if (currentPersona == null)
-      {
-        return Ok();
-      }
-      else
-      {
-        currentPersona.Blacklisted = request.Success;
-
-        _context.Entry(currentPersona).State = EntityState.Modified;
-
-        await _context.SaveChangesAsync();
-
-        return Ok();
-      }
+      currentPersona.LastPaymentDate = _simulation.CurrentDate;
+      
+      await _context.SaveChangesAsync();
     }
-    else if (request.Message == "Company payment")
-    {
-      if (!request.Success)
-      {
-        // Either retry payment, or take out a loan before retrying?
-      }
 
-      return Ok();
-    }
-    else return Ok();
+    _logger.LogInformation("{CurrentDate}: Received commercial banking payment: {message}", _simulation.CurrentDate, request.Message);
+    return Ok();
   }
 }
