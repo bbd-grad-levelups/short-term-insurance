@@ -14,7 +14,6 @@ public class BankingController(PersonaContext context, ISimulationService simula
   private readonly ISimulationService _simulation = simulation;
   private readonly ILogger _logger = logger;
 
-  // Currently stubbed, pending bank API spec
   /// <summary>
   /// Endpoint to receive debit order payment success from bank. (Not finalised)
   /// </summary>
@@ -34,7 +33,7 @@ public class BankingController(PersonaContext context, ISimulationService simula
       await _context.SaveChangesAsync();
     }
 
-    _logger.LogInformation("{CurrentDate}: Received commercial banking payment: {message}", _simulation.CurrentDate, request.Message);
+    _logger.LogInformation("Received commercial banking payment: {message}", request.Message);
     return Ok();
   }
 }

@@ -1,3 +1,5 @@
+using Humanizer;
+
 namespace Backend.Helpers;
 
 public record TimeEvents(bool NewMonth, bool NewYear);
@@ -5,16 +7,16 @@ public record TimeEvents(bool NewMonth, bool NewYear);
 public interface ISimulationService
 {
   bool IsRunning { get; set; }
-  string CurrentDate { get; set; }
+  string CurrentDate { get; }
 
   void StartSim();
   TimeEvents UpdateDate();
   void Reset();
+  int DaysSinceDate(string date);
 }
 
-public class SimulationService(ILogger<SimulationService> logger) : ISimulationService
+public class SimulationService() : ISimulationService
 {
-  private readonly ILogger<SimulationService> _logger = logger;
 
   internal DateTime simStart;
   public string CurrentDate { get; set; } = "01|01|01";
@@ -70,5 +72,22 @@ public class SimulationService(ILogger<SimulationService> logger) : ISimulationS
   {
     IsRunning = true;
     CurrentDate = "01|01|01";
+    simStart = DateTime.Now;
+  }
+
+  public int DaysSinceDate(string date)
+  {
+    return ConvertToDays(CurrentDate) - ConvertToDays(date);
+  }
+
+  internal static int ConvertToDays(string date)
+  {
+    var dateParts = date.Split('|');
+    
+    int years = int.Parse(dateParts[0]);
+    int months = int.Parse(dateParts[1]);
+    int days = int.Parse(dateParts[2]);
+
+    return (years * 12 + months) * 30 + days;
   }
 }

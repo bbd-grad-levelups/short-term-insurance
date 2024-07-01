@@ -1,16 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Backend.Models;
 using Backend.Helpers;
-using Backend.Controllers;
-using Backend.Contexts;
 
 namespace Backend.Controllers;
 
 [Route("api/insurance")]
 [ApiController]
-public class InsuranceController(PersonaContext context, IStockExchangeService stock, IBankingService banking, ILogger<InsuranceController> logger) : ControllerBase
+public class InsuranceController(IStockExchangeService stock, IBankingService banking, ILogger<InsuranceController> logger) : ControllerBase
 {
-  private readonly PersonaContext _context = context;
   private readonly IStockExchangeService _stock = stock;
   private readonly ILogger<InsuranceController> _logger = logger;
   private readonly IBankingService _banking = banking;
@@ -23,7 +20,9 @@ public class InsuranceController(PersonaContext context, IStockExchangeService s
   [HttpPost("registered")]
   public async Task<ActionResult> ReceiveStockRegistration([FromBody] RegisterStockResponse request)
   {
-    await _stock.SellStock(10000);
+    _logger.LogInformation("Stock Exchange registration successful (ID: {tradingId}). Registering initial company stock on the Stock Exchange", request.TradingId);
+    
+    await _stock.SellStock(request.TradingId, 10000);
     return Ok();
   }
 
@@ -35,6 +34,8 @@ public class InsuranceController(PersonaContext context, IStockExchangeService s
   [HttpPost("dividends")]
   public async Task<ActionResult> ReceiveDividendsReference([FromBody] DividendsResponse request)
   {
+    _logger.LogInformation("Received dividends payment reference {ReferenceId}, making payment", request.ReferenceId);
+
     await _banking.MakeCommercialPayment(request.ReferenceId);
     return Ok();
   }

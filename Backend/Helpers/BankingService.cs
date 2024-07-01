@@ -2,26 +2,15 @@ using Newtonsoft.Json;
 
 using System.Net.Http.Headers;
 
-using Microsoft.Extensions.Options;
-
 namespace Backend.Helpers;
 
 record DebitOrderBody(long PersonaId, string CommercialAccount, double Amount);
 record CommercialPaymentBody(string account, string CommercialAccount, double Amount);
 record CommercialReferenceBody(string reference);
 
-public class BankingServiceSettings
-{
-  public string? RetailKey { get; set; }
-  public string? CommercialKey { get; set; }
-  public string? CompanyAccount { get; set; }
-  public string? RetailEndpoint { get; set; }
-  public string? CommercialEndpoint { get; set; }
-}
-
 public interface IBankingService
 {
-  Task CreateRetailDebitOrder(long personaId, double amount);
+  Task<int> CreateRetailDebitOrder(long personaId, double amount);
   Task MakeCommercialPayment(string account, double amount);
   Task MakeCommercialPayment(long personaId, double amount);
   Task MakeCommercialPayment(string reference);
@@ -32,11 +21,11 @@ public class BankingService : IBankingService
 {
   private readonly HttpClient _httpClient;
   private readonly ILogger<BankingService> _logger;
-  private readonly string _retailEndpoint = "https://api.commercialbank.projects.bbdgrad.com";
-  internal string _commercialEndpoint = "https://api.commercialbank.projects.bbdgrad.com";
-  internal string _companyAccount = "short-term-insurance";
-  internal string _retailKey = "none";
-  internal string _commercialKey = "none";
+  private readonly string _retailEndpoint = "https://api.retailbank.projects.bbdgrad.com";
+  private readonly string _commercialEndpoint = "https://api.commercialbank.projects.bbdgrad.com";
+  private readonly string _companyAccount = "short-term-insurance";
+  private readonly string _retailKey = "none";
+  private readonly string _commercialKey = "none";
 
   public BankingService(HttpClient httpClient, ILogger<BankingService> logger)
   {
@@ -47,7 +36,7 @@ public class BankingService : IBankingService
     _httpClient.DefaultRequestHeaders.Add("origin-service", "ShortTermInsurance");
   }
 
-  public async Task CreateRetailDebitOrder(long personaId, double amount)
+  public async Task<int> CreateRetailDebitOrder(long personaId, double amount)
   {
     _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("x-api-key", _retailKey);
 
@@ -65,6 +54,7 @@ public class BankingService : IBankingService
 
     var response = await _httpClient.SendAsync(request);
     _logger.LogInformation(response.ToString() + "/n" + response.Content.ToString());
+    return 1; // TODO: ACTUALLY DO LOL
   }
 
   public async Task MakeCommercialPayment(string account, double amount)

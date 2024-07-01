@@ -24,19 +24,18 @@ public class PersonaController(PersonaContext context, IBankingService banking, 
   {
     _logger.LogInformation("Received new persona information");
 
-    List<long> deadPeopleIds = new List<long>();
+    List<long> deadPeopleIds = [];
     // Remove dead people (RemovePersona Functionality)
     var deadPeopleAwait = _context.Personas.Where((Persona person) => deadPeopleIds.Contains(person.PersonaId)).ToListAsync();
 
     // Add next of kin to system
-    List<Persona> nextOfKin = new List<Persona>();
+    List<Persona> nextOfKin = [];
     List<Persona> newPeople = nextOfKin.Select(newPerson =>
     {
       return new Persona()
       {
-        Blacklisted = false,
         Electronics = newPerson.Electronics,
-        PersonaId = newPerson.PersonaId
+        PersonaId = newPerson.PersonaId,
       };
     }).ToList();
 

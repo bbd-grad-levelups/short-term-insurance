@@ -26,7 +26,7 @@ public partial class Persona
   [Column("debit_order_id")]
   public int DebitOrderId { get; set; }
 
-  public Persona(int id = default, long personaId = default, int electronics = default, string lastPaymentDate = "", int debitOrderId = 0)
+  public Persona(int id = default, long personaId = default, int electronics = default, string lastPaymentDate = "01|01|01", int debitOrderId = 0)
   {
     Id = id;
     PersonaId = personaId;
@@ -38,7 +38,7 @@ public partial class Persona
   public Persona()
   {
     Electronics = default;
-    LastPaymentDate = string.Empty;
+    LastPaymentDate = "01|01|01";
   }
 }
 

@@ -2,8 +2,6 @@ using Newtonsoft.Json;
 
 using System.Net.Http.Headers;
 
-using Microsoft.Extensions.Options;
-
 namespace Backend.Helpers;
 
 public class StockExchangeSettings
@@ -19,7 +17,7 @@ record DividendsBody(string Company, float Dividends);
 public interface IStockExchangeService
 {
   Task RegisterCompany();
-  Task SellStock(int amount);
+  Task SellStock(string tradingId, int amount);
   Task RequestDividends(float profit);
 }
 
@@ -27,7 +25,7 @@ public class StockExchangeService : IStockExchangeService
 {
   private readonly HttpClient _httpClient;
   private readonly ILogger<StockExchangeService> _logger;
-  private readonly string _exchangeEndpoint = "https://api.commercialbank.projects.bbdgrad.com";
+  private readonly string _exchangeEndpoint = "https://mese.projects.bbdgrad.com";
   internal string _exchangeKey = "your_exchange_key_here";
 
   public StockExchangeService(HttpClient httpClient, ILogger<StockExchangeService> logger)
@@ -80,7 +78,7 @@ public class StockExchangeService : IStockExchangeService
     _logger.LogInformation(apiUrl, "", response.StatusCode);
   }
 
-  public async Task SellStock(int amount) 
+  public async Task SellStock(string tradingId, int amount) 
   {
     _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("x-api-key", _exchangeKey);
 

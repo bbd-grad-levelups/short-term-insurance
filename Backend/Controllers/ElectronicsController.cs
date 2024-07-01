@@ -8,10 +8,11 @@ namespace Backend.Controllers;
 
 [Route("api/electronics")]
 [ApiController]
-public class ElectronicsController(PersonaContext context, IBankingService banking, ILogger<ElectronicsController> logger) : ControllerBase
+public class ElectronicsController(PersonaContext context, IBankingService banking, ISimulationService simulation, ILogger<ElectronicsController> logger) : ControllerBase
 {
   private readonly PersonaContext _context = context;
   private readonly IBankingService _banking = banking;
+  private readonly ISimulationService _simulation = simulation;
   private readonly ILogger<ElectronicsController> _logger = logger;
 
   /// <summary>
@@ -22,32 +23,33 @@ public class ElectronicsController(PersonaContext context, IBankingService banki
   [HttpPatch("")]
   public async Task<ActionResult> RemoveElectronics([FromBody] DestroyedElectronics request)
   {
+    
     if (request.AmountDestroyed > 0)
     {
       var persona = await _context.Personas.FirstOrDefaultAsync(p => p.PersonaId == request.PersonaId);
 
       if (persona != null)
       {
-        _logger.LogInformation("Found persona: {ToString}", persona.ToString());
-        bool boundedClaim = request.AmountDestroyed <= persona.Electronics;
-
-        int electronicsClaimed = boundedClaim ? request.AmountDestroyed : persona.Electronics;
-        if (!persona.Blacklisted)
+        int electronicsClaimed = Math.Min(request.AmountDestroyed, persona.Electronics);
+        bool currentlyInsured = _simulation.DaysSinceDate(persona.LastPaymentDate) < 32;
+        if (currentlyInsured)
         {
           double claimPayout = Insurance.CalculatePayout(electronicsClaimed);
           await _banking.MakeCommercialPayment(persona.PersonaId, claimPayout);
         }
 
-        persona.Electronics = boundedClaim ? persona.Electronics - request.AmountDestroyed : 0;
-        _context.Entry(persona).State = EntityState.Modified;
+        persona.Electronics -= electronicsClaimed;
 
         var newPremium = Insurance.CalculateInsurance(persona.Electronics);
+        int newDebitId = await _banking.CreateRetailDebitOrder(persona.PersonaId, newPremium);
+        persona.DebitOrderId = newDebitId;
         await _context.SaveChangesAsync();
-        await _banking.CreateRetailDebitOrder(persona.PersonaId, newPremium);
+        
+        _logger.LogInformation("Received claim for {personaId}, paid out: {claimPaid}", persona.PersonaId, currentlyInsured);
       }
       else
       {
-        _logger.LogInformation("Electronics destroyed for persona '{PersonaId}', but they are not on the system", request.PersonaId);
+        _logger.LogInformation("Received claim for persona {personaId} that doesn't have insurance", request.PersonaId);
       }
     }
 
@@ -67,7 +69,6 @@ public class ElectronicsController(PersonaContext context, IBankingService banki
     if (request.AmountNew > 0)
     {
       var currentPersona = await _context.Personas.FirstAsync(p => p.PersonaId == request.PersonaId);
-      // Create person if they didn't exist before
       if (currentPersona != null)
       {
         currentPersona.Electronics += request.AmountNew;
@@ -76,18 +77,18 @@ public class ElectronicsController(PersonaContext context, IBankingService banki
       {
         currentPersona ??= new Persona()
         {
-          Blacklisted = false,
           PersonaId = request.PersonaId,
-          Electronics = request.AmountNew
+          Electronics = request.AmountNew,
         };
         _context.Add(currentPersona);
       }
-      var saveAwait = _context.SaveChangesAsync();
 
       var newPremium = Insurance.CalculateInsurance(currentPersona.Electronics);
+      int newDebitId = await _banking.CreateRetailDebitOrder(currentPersona.PersonaId, newPremium);
+      currentPersona.DebitOrderId = newDebitId;
+      await _context.SaveChangesAsync();
 
-      await _banking.CreateRetailDebitOrder(currentPersona.PersonaId, newPremium);
-      await saveAwait;
+      _logger.LogInformation("Received new insurance request ({AmountNew} electronics) for {personaId}", request.AmountNew, currentPersona.PersonaId);
     }
 
     return NoContent();
@@ -102,6 +103,7 @@ public class ElectronicsController(PersonaContext context, IBankingService banki
   public ActionResult UpdatePrice([FromBody] ModifyInsurancePrice request)
   {
     Insurance.CurrentPrice = request.NewPrice;
+    _logger.LogInformation("Received new price for insurance: {CurrentPrice}", Insurance.CurrentPrice);
     return NoContent();
   }
 }

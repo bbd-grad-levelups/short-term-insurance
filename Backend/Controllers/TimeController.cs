@@ -23,6 +23,7 @@ public class TimeController(PersonaContext context, IStockExchangeService stock,
     _simulation.StartSim();
     await _stock.RegisterCompany();
     _logger.LogInformation("Simulation started! Good luck...");
+    _logger.LogInformation("Registering Short Term Insurance on the stock exchange.");
     return Ok();
   } 
 

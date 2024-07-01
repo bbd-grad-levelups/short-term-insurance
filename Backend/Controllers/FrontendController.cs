@@ -10,10 +10,9 @@ public record LogsPage(IEnumerable<Log> Logs, int Page, int PageSize, int Availa
 
 [Route("api")]
 [ApiController]
-public class FrontendController(PersonaContext context, ILogger<FrontendController> logger) : ControllerBase
+public class FrontendController(PersonaContext context) : ControllerBase
 {
   private readonly PersonaContext _context = context;
-  private readonly ILogger _logger = logger;
 
   /// <summary>
   /// Retrieves a list of personas, paginated.
@@ -39,7 +38,7 @@ public class FrontendController(PersonaContext context, ILogger<FrontendControll
     IEnumerable<Persona> results;
     if (personas.Count == 0)
     {
-      results = Enumerable.Empty<Persona>();
+      results = [];
     }
     else
     {
@@ -71,10 +70,9 @@ public class FrontendController(PersonaContext context, ILogger<FrontendControll
   {
     var someLogs = new List<Log>()
     {
-      new("2024|06|24|15|32|40", "Something happened"),
-      new("2024|06|24|15|33|32", "Something else happened")
+      new("2024|06|24", "Something happened"),
+      new("2024|06|25", "Something else happened")
     };
-
 
     int totalLogs = await _context.Personas.CountAsync(); // Just to make "not async" shut up
     totalLogs = 2;
@@ -85,15 +83,10 @@ public class FrontendController(PersonaContext context, ILogger<FrontendControll
     //                            .Skip((page - 1) * pageSize)
     //                            .Take(pageSize)
     //                            .ToListAsync();
-
-    //if (personas.Count == 0)
-    //{
-    //  return NotFound();
-    //}
     IEnumerable<Log> results;
     if (someLogs.Count == 0)
     {
-      results = Enumerable.Empty<Log>();
+      results = [];
     }
     else
     {
