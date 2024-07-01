@@ -19,21 +19,26 @@ public partial class Persona
   public int Electronics { get; set; }
 
   [Required]
-  [Column("blacklisted")]
-  public bool Blacklisted { get; set; }
+  [Column("last_payment_date")]
+  public string LastPaymentDate { get; set; }
 
-  public Persona(int id = default, long personaId = default, int electronics = default, bool blacklisted = default)
+  [Required]
+  [Column("debit_order_id")]
+  public int DebitOrderId { get; set; }
+
+  public Persona(int id = default, long personaId = default, int electronics = default, string lastPaymentDate = "", int debitOrderId = 0)
   {
     Id = id;
     PersonaId = personaId;
     Electronics = electronics;
-    Blacklisted = blacklisted;
+    LastPaymentDate = lastPaymentDate;
+    DebitOrderId = debitOrderId;
   }
 
   public Persona()
   {
     Electronics = default;
-    Blacklisted = default;
+    LastPaymentDate = string.Empty;
   }
 }
 
