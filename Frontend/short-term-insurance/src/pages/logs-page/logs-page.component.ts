@@ -54,14 +54,14 @@ export class LogsPageComponent {
     this.insuranceService.getLogs(beginDate, endDate, this.page)
       .subscribe({
         next: response => {
-          this.isLastPage = !response.length;
+          this.isLastPage = response.page === response.availablePages;
           if (nextPage && this.isLastPage) {
             this.page--;
             this.snackBar.open('On Last Page.', 'Ok', { "duration": 4000 });
             return;
           }
 
-          this.dataSource = new MatTableDataSource<Logs>(response);
+          this.dataSource = new MatTableDataSource<Logs>(response.data);
           this.loading = false;
         },
         error: () => {
