@@ -21,6 +21,7 @@ public class BaseService
   internal static HttpClient SetupClient()
   {
     var cert = Environment.GetEnvironmentVariable("MTLS_CERT") ?? throw new Exception("Could not load MTLS_CERT");
+    cert = RemoveBeginEndCertificate(cert);
     X509Certificate clientCert = new X509Certificate2(Convert.FromBase64String(cert));
 
     var handler = new HttpClientHandler();
@@ -44,5 +45,16 @@ public class BaseService
     };
 
     return _httpClient.SendAsync(request);
+  }
+
+  internal static string RemoveBeginEndCertificate(string cert)
+  {
+    const string beginCert = "-----BEGIN CERTIFICATE-----";
+    const string endCert = "-----END CERTIFICATE-----";
+
+    cert = cert.Replace(beginCert, string.Empty, StringComparison.OrdinalIgnoreCase);
+    cert = cert.Replace(endCert, string.Empty, StringComparison.OrdinalIgnoreCase);
+    cert = cert.Replace("\n", string.Empty).Replace("\r", string.Empty); 
+    return cert.Trim();
   }
 }
