@@ -1,15 +1,16 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
-
-using System.Reflection;
-
-using Backend.Helpers;
+using Backend.Contexts;
+using Backend.Jobs;
+using Backend.Services;
 
 using Hangfire;
 using Hangfire.PostgreSql;
-using Backend.Helpers.Jobs;
-using Backend.Contexts;
+
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+
 using Npgsql;
+
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,21 +28,12 @@ var connectionStringBuilder = new NpgsqlConnectionStringBuilder()
 builder.Services.AddDbContext<PersonaContext>(opt => opt.UseNpgsql(connectionStringBuilder.ConnectionString));
 builder.Services.AddControllers();
 
-builder.Services.AddCors(options =>
-{
-  options.AddPolicy("CORS", builder =>
-  {
-    builder.WithOrigins(["http://localhost:4200", "https://insurance.projects.bbdgrad.com"])
-          .WithHeaders(["Content-Type", "Authorization"])
-          .WithMethods([HttpMethods.Get, HttpMethods.Post, HttpMethods.Delete, HttpMethods.Options]).Build();
-  });
-});
-
 builder.Services.AddLogging();
 
 builder.Services.AddSingleton<ISimulationService, SimulationService>();
 builder.Services.AddHttpClient<IBankingService, BankingService>();
 builder.Services.AddHttpClient<IStockExchangeService, StockExchangeService>();
+builder.Services.AddHttpClient<ITaxService, TaxService>();
 
 builder.Services.AddHangfire(config =>
 {
@@ -72,12 +64,9 @@ using (var scope = serviceProvider.CreateScope())
   var hangfireJobs = scope.ServiceProvider.GetRequiredService<HangfireJobs>();
 
   RecurringJob.AddOrUpdate("TimeStep", () => hangfireJobs.TimeStep(), "*/5 * * * *");
-  RecurringJob.AddOrUpdate("Registration", () => hangfireJobs.RegisterCompany(100), Cron.Minutely);
 }
 
-app.UseCors("CORS");
-
-app.MapGet("/", () => "Health Good");
+app.MapGet("/", () => "Health Good - No need to worry Karl :)");
 app.MapControllers();
 
 app.Run();
