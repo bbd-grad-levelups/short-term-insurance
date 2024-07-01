@@ -6,10 +6,12 @@ namespace Backend.Controllers;
 
 [Route("api")]
 [ApiController]
-public class TimeController(PersonaContext context, IStockExchangeService stock, ISimulationService sim, ILogger<TimeController> logger) : ControllerBase
+public class TimeController(PersonaContext personaContext, LoggerContext loggerContext, IStockExchangeService stock, ITaxService tax, ISimulationService sim, ILogger<TimeController> logger) : ControllerBase
 {
-  private readonly PersonaContext _context = context;
+  private readonly PersonaContext _personaContext = personaContext;
+  private readonly LoggerContext _loggerContext = loggerContext;
   private readonly IStockExchangeService _stock = stock;
+  private readonly ITaxService _tax = tax;
   private readonly ISimulationService _simulation = sim;
   private readonly ILogger<TimeController> _logger = logger;
 
@@ -20,10 +22,15 @@ public class TimeController(PersonaContext context, IStockExchangeService stock,
   [HttpPost("time")]
   public async Task<ActionResult> ReceiveStartSim()
   {
+    _logger.LogInformation("Starting simulation! Good luck...");
     _simulation.StartSim();
-    await _stock.RegisterCompany();
-    _logger.LogInformation("Simulation started! Good luck...");
+    
     _logger.LogInformation("Registering Short Term Insurance on the stock exchange.");
+    await _stock.Register();
+    
+    _logger.LogInformation("Registering Short Term Insurance on the revenue service.");
+    await _tax.Register();
+
     return Ok();
   } 
 
@@ -34,8 +41,12 @@ public class TimeController(PersonaContext context, IStockExchangeService stock,
   [HttpPost("time/reset")]
   public async Task<ActionResult> ReceiveSimReset()
   {
-    await _context.RemoveAll();
+    await _personaContext.RemoveAll();
+    await _loggerContext.RemoveAll();
+
+    _simulation.Reset();
     _logger.LogInformation("Simulation reset!");
+    
     return Ok();
   }
 }

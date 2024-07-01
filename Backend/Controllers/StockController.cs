@@ -4,12 +4,12 @@ using Backend.Helpers;
 
 namespace Backend.Controllers;
 
-[Route("api/insurance")]
+[Route("api/stock")]
 [ApiController]
-public class InsuranceController(IStockExchangeService stock, IBankingService banking, ILogger<InsuranceController> logger) : ControllerBase
+public class StockController(IStockExchangeService stock, IBankingService banking, ILogger<StockController> logger) : ControllerBase
 {
   private readonly IStockExchangeService _stock = stock;
-  private readonly ILogger<InsuranceController> _logger = logger;
+  private readonly ILogger<StockController> _logger = logger;
   private readonly IBankingService _banking = banking;
 
   /// <summary>

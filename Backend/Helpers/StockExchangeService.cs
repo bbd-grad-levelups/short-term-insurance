@@ -16,7 +16,7 @@ record DividendsBody(string Company, float Dividends);
 
 public interface IStockExchangeService
 {
-  Task RegisterCompany();
+  Task Register();
   Task SellStock(string tradingId, int amount);
   Task RequestDividends(float profit);
 }
@@ -26,7 +26,8 @@ public class StockExchangeService : IStockExchangeService
   private readonly HttpClient _httpClient;
   private readonly ILogger<StockExchangeService> _logger;
   private readonly string _exchangeEndpoint = "https://mese.projects.bbdgrad.com";
-  internal string _exchangeKey = "your_exchange_key_here";
+  private readonly string registerCallback = "https://api.insurance.projects.bbdgrad.com/api/stock/registered";
+  private readonly string dividendsCallback = "https://api.insurance.projects.bbdgrad.com/api/stock/dividends";
 
   public StockExchangeService(HttpClient httpClient, ILogger<StockExchangeService> logger)
   {
@@ -37,9 +38,8 @@ public class StockExchangeService : IStockExchangeService
     _httpClient.DefaultRequestHeaders.Add("origin-service", "ShortTermInsurance");
   }
 
-  public async Task RegisterCompany()
+  public async Task Register()
   {
-    _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("x-api-key", _exchangeKey);
 
     var body = new RegisterBody("NoChoice", "ShortTermInsurance");
     var jsonBody = JsonConvert.SerializeObject(body);
@@ -47,7 +47,7 @@ public class StockExchangeService : IStockExchangeService
     var content = new StringContent(jsonBody, System.Text.Encoding.UTF8, "application/json");
     content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-    string apiUrl = $"{_exchangeEndpoint}/businesses?callbackUrl=blah";
+    string apiUrl = $"{_exchangeEndpoint}/businesses?callbackUrl={registerCallback}";
     var request = new HttpRequestMessage(HttpMethod.Post, apiUrl)
     {
       Content = content
@@ -60,7 +60,6 @@ public class StockExchangeService : IStockExchangeService
 
   public async Task RequestDividends(float profit)
   {
-    _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("x-api-key", _exchangeKey);
 
     var body = new DividendsBody("ShortTermInsurance", profit);
     var jsonBody = JsonConvert.SerializeObject(body);
@@ -68,7 +67,7 @@ public class StockExchangeService : IStockExchangeService
     var content = new StringContent(jsonBody, System.Text.Encoding.UTF8, "application/json");
     content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-    string apiUrl = $"{_exchangeEndpoint}/sell?callbackUrl=blah";
+    string apiUrl = $"{_exchangeEndpoint}/sell?callbackUrl={dividendsCallback}";
     var request = new HttpRequestMessage(HttpMethod.Post, apiUrl)
     {
       Content = content
@@ -80,7 +79,6 @@ public class StockExchangeService : IStockExchangeService
 
   public async Task SellStock(string tradingId, int amount) 
   {
-    _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("x-api-key", _exchangeKey);
 
     var body = new StockSaleBody("ShortTermInsurance", amount);
     var jsonBody = JsonConvert.SerializeObject(body);

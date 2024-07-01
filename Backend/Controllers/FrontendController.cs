@@ -78,7 +78,7 @@ public class FrontendController(PersonaContext context) : ControllerBase
     totalLogs = 2;
     int totalPages = 1;
     //var totalPages = (int)Math.Ceiling(totalPersonas / (double)pageSize);
-    //var personas = await _context.Personas
+    //var personas = await _personaContext.Personas
     //                            .OrderBy(x => x.PersonaId)
     //                            .Skip((page - 1) * pageSize)
     //                            .Take(pageSize)

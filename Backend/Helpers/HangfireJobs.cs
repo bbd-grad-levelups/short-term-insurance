@@ -14,7 +14,7 @@ public class HangfireJobs(IStockExchangeService stock, IBankingService banking, 
   public void RegisterCompany(int amount)
   {
     _logger.LogInformation($"Registering company with amount: {amount}");
-    _stock.RegisterCompany();
+    _stock.Register();
   }
 
   public async Task TimeStep()
@@ -25,14 +25,16 @@ public class HangfireJobs(IStockExchangeService stock, IBankingService banking, 
     {
       var events = _simulation.UpdateDate();
 
-      if (events.NewYear)
-      {
-        // Not sure if we're even doing anything year related?
-      }
-      else if (events.NewMonth)
+      if (events.NewMonth)
       {
         float profit = await _banking.RequestProfit();
         await _stock.RequestDividends(profit);
+        _logger.LogInformation("Requested Dividends payout for monthly profit: {profit}", profit);
+      }
+
+      if (events.NewYear)
+      {
+        // Not sure if we're even doing anything year related?
       }
     }
   }

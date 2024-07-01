@@ -5,8 +5,8 @@ using System.Net.Http.Headers;
 namespace Backend.Helpers;
 
 record DebitOrderBody(long PersonaId, string CommercialAccount, double Amount);
-record CommercialPaymentBody(string account, string CommercialAccount, double Amount);
-record CommercialReferenceBody(string reference);
+record CommercialPaymentBody(string Account, string CommercialAccount, double Amount);
+record CommercialReferenceBody(string Reference);
 
 public interface IBankingService
 {
@@ -24,8 +24,6 @@ public class BankingService : IBankingService
   private readonly string _retailEndpoint = "https://api.retailbank.projects.bbdgrad.com";
   private readonly string _commercialEndpoint = "https://api.commercialbank.projects.bbdgrad.com";
   private readonly string _companyAccount = "short-term-insurance";
-  private readonly string _retailKey = "none";
-  private readonly string _commercialKey = "none";
 
   public BankingService(HttpClient httpClient, ILogger<BankingService> logger)
   {
@@ -38,7 +36,6 @@ public class BankingService : IBankingService
 
   public async Task<int> CreateRetailDebitOrder(long personaId, double amount)
   {
-    _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("x-api-key", _retailKey);
 
     var body = new DebitOrderBody(personaId, _companyAccount, amount);
     var jsonBody = JsonConvert.SerializeObject(body);
@@ -59,7 +56,6 @@ public class BankingService : IBankingService
 
   public async Task MakeCommercialPayment(string account, double amount)
   {
-    _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("x-api-key", _commercialKey);
 
     var body = new CommercialPaymentBody(account, _companyAccount, amount);
     var json = JsonConvert.SerializeObject(body);
@@ -79,7 +75,6 @@ public class BankingService : IBankingService
 
   public async Task MakeCommercialPayment(long personaId, double amount)
   {
-    _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("x-api-key", _commercialKey);
 
     var body = new DebitOrderBody(personaId, _companyAccount, amount);
     var json = JsonConvert.SerializeObject(body);
@@ -99,7 +94,6 @@ public class BankingService : IBankingService
 
   public async Task MakeCommercialPayment(string reference)
   {
-    _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("x-api-key", _commercialKey);
 
     var body = new CommercialReferenceBody(reference);
     var json = JsonConvert.SerializeObject(body);
@@ -119,7 +113,6 @@ public class BankingService : IBankingService
 
   public async Task<float> RequestProfit()
   {
-    _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("x-api-key", _commercialKey);
 
     var body = new CommercialReferenceBody("");
     var json = JsonConvert.SerializeObject(body);
