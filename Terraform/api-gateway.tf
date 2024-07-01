@@ -69,48 +69,48 @@ resource "aws_api_gateway_rest_api" "frontend_api" {
             "connectionType" : "VPC_LINK",
             "type" : "http_proxy"
           }
-        }
-      },
-      "options" : {
-        "responses" : {
-          "200" : {
-            "description" : "200 response",
-            "headers" : {
-              "Access-Control-Allow-Origin" : {
-                "schema" : {
-                  "type" : "string"
+        },
+        "options" : {
+          "responses" : {
+            "200" : {
+              "description" : "200 response",
+              "headers" : {
+                "Access-Control-Allow-Origin" : {
+                  "schema" : {
+                    "type" : "string"
+                  }
+                },
+                "Access-Control-Allow-Methods" : {
+                  "schema" : {
+                    "type" : "string"
+                  }
+                },
+                "Access-Control-Allow-Headers" : {
+                  "schema" : {
+                    "type" : "string"
+                  }
                 }
               },
-              "Access-Control-Allow-Methods" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              },
-              "Access-Control-Allow-Headers" : {
-                "schema" : {
-                  "type" : "string"
+              "content" : {}
+            }
+          },
+          "x-amazon-apigateway-integration" : {
+            "type" : "mock",
+            "responses" : {
+              "default" : {
+                "statusCode" : "200",
+                "responseParameters" : {
+                  "method.response.header.Access-Control-Allow-Methods" : "'GET,OPTIONS'",
+                  "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                  "method.response.header.Access-Control-Allow-Origin" : "'${local.cors_allowed_origin}'"
                 }
               }
             },
-            "content" : {}
+            "requestTemplates" : {
+              "application/json" : "{\"statusCode\": 200}"
+            },
+            "passthroughBehavior" : "when_no_templates"
           }
-        },
-        "x-amazon-apigateway-integration" : {
-          "type" : "mock",
-          "responses" : {
-            "default" : {
-              "statusCode" : "200",
-              "responseParameters" : {
-                "method.response.header.Access-Control-Allow-Methods" : "'GET,OPTIONS'",
-                "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
-                "method.response.header.Access-Control-Allow-Origin" : "'${local.cors_allowed_origin}'"
-              }
-            }
-          },
-          "requestTemplates" : {
-            "application/json" : "{\"statusCode\": 200}"
-          },
-          "passthroughBehavior" : "when_no_templates"
         }
       },
       "/{proxy+}" : {
@@ -126,56 +126,6 @@ resource "aws_api_gateway_rest_api" "frontend_api" {
           "security" : [{
             "cognito" : []
           }],
-          "options" : {
-            "parameters" : [{
-              "name" : "proxy",
-              "in" : "path",
-              "required" : true,
-              "schema" : {
-                "type" : "string"
-              }
-            }],
-            "responses" : {
-              "200" : {
-                "description" : "200 response",
-                "headers" : {
-                  "Access-Control-Allow-Origin" : {
-                    "schema" : {
-                      "type" : "string"
-                    }
-                  },
-                  "Access-Control-Allow-Methods" : {
-                    "schema" : {
-                      "type" : "string"
-                    }
-                  },
-                  "Access-Control-Allow-Headers" : {
-                    "schema" : {
-                      "type" : "string"
-                    }
-                  }
-                },
-                "content" : {}
-              }
-            },
-            "x-amazon-apigateway-integration" : {
-              "type" : "mock",
-              "responses" : {
-                "default" : {
-                  "statusCode" : "200",
-                  "responseParameters" : {
-                    "method.response.header.Access-Control-Allow-Methods" : "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'",
-                    "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
-                    "method.response.header.Access-Control-Allow-Origin" : "'${local.cors_allowed_origin}'"
-                  }
-                }
-              },
-              "requestTemplates" : {
-                "application/json" : "{\"statusCode\": 200}"
-              },
-              "passthroughBehavior" : "when_no_match"
-            }
-          },
           "x-amazon-apigateway-integration" : {
             "connectionId" : aws_api_gateway_vpc_link.nlb.id,
             "httpMethod" : "ANY",
@@ -187,89 +137,139 @@ resource "aws_api_gateway_rest_api" "frontend_api" {
               "integration.request.path.proxy" : "method.request.path.proxy"
             }
           }
-        }
-      }
-    },
-    "/swagger/{proxy+}" : {
-      "get" : {
-        "parameters" : [{
-          "name" : "proxy",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }],
-        "x-amazon-apigateway-integration" : {
-          "type" : "http_proxy",
-          "connectionId" : aws_api_gateway_vpc_link.nlb.id,
-          "httpMethod" : "GET",
-          "uri" : "http://${data.aws_lb.nlb.dns_name}/swagger/{proxy}",
+        },
+        "options" : {
+          "parameters" : [{
+            "name" : "proxy",
+            "in" : "path",
+            "required" : true,
+            "schema" : {
+              "type" : "string"
+            }
+          }],
           "responses" : {
-            "default" : {
-              "statusCode" : "200"
+            "200" : {
+              "description" : "200 response",
+              "headers" : {
+                "Access-Control-Allow-Origin" : {
+                  "schema" : {
+                    "type" : "string"
+                  }
+                },
+                "Access-Control-Allow-Methods" : {
+                  "schema" : {
+                    "type" : "string"
+                  }
+                },
+                "Access-Control-Allow-Headers" : {
+                  "schema" : {
+                    "type" : "string"
+                  }
+                }
+              },
+              "content" : {}
             }
           },
-          "requestParameters" : {
-            "integration.request.path.proxy" : "method.request.path.proxy"
-          },
-          "passthroughBehavior" : "when_no_match",
-          "connectionType" : "VPC_LINK",
-          "cacheNamespace" : "df9bas",
-          "cacheKeyParameters" : ["method.request.path.proxy"]
-        }
-      },
-      "options" : {
-        "parameters" : [{
-          "name" : "proxy",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }],
-        "responses" : {
-          "200" : {
-            "description" : "200 response",
-            "headers" : {
-              "Access-Control-Allow-Origin" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              },
-              "Access-Control-Allow-Methods" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              },
-              "Access-Control-Allow-Headers" : {
-                "schema" : {
-                  "type" : "string"
+          "x-amazon-apigateway-integration" : {
+            "type" : "mock",
+            "responses" : {
+              "default" : {
+                "statusCode" : "200",
+                "responseParameters" : {
+                  "method.response.header.Access-Control-Allow-Methods" : "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'",
+                  "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                  "method.response.header.Access-Control-Allow-Origin" : "'${local.cors_allowed_origin}'"
                 }
               }
             },
-            "content" : {}
+            "requestTemplates" : {
+              "application/json" : "{\"statusCode\": 200}"
+            },
+            "passthroughBehavior" : "when_no_match"
+          }
+        }
+      },
+      "/swagger/{proxy+}" : {
+        "get" : {
+          "parameters" : [{
+            "name" : "proxy",
+            "in" : "path",
+            "required" : true,
+            "schema" : {
+              "type" : "string"
+            }
+          }],
+          "x-amazon-apigateway-integration" : {
+            "type" : "http_proxy",
+            "connectionId" : aws_api_gateway_vpc_link.nlb.id,
+            "httpMethod" : "GET",
+            "uri" : "http://${data.aws_lb.nlb.dns_name}/swagger/{proxy}",
+            "responses" : {
+              "default" : {
+                "statusCode" : "200"
+              }
+            },
+            "requestParameters" : {
+              "integration.request.path.proxy" : "method.request.path.proxy"
+            },
+            "passthroughBehavior" : "when_no_match",
+            "connectionType" : "VPC_LINK",
+            "cacheNamespace" : "df9bas",
+            "cacheKeyParameters" : ["method.request.path.proxy"]
           }
         },
-        "x-amazon-apigateway-integration" : {
-          "type" : "mock",
+        "options" : {
+          "parameters" : [{
+            "name" : "proxy",
+            "in" : "path",
+            "required" : true,
+            "schema" : {
+              "type" : "string"
+            }
+          }],
           "responses" : {
-            "default" : {
-              "statusCode" : "200",
-              "responseParameters" : {
-                "method.response.header.Access-Control-Allow-Methods" : "'GET,OPTIONS'",
-                "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
-                "method.response.header.Access-Control-Allow-Origin" : "'${local.cors_allowed_origin}'"
-              }
+            "200" : {
+              "description" : "200 response",
+              "headers" : {
+                "Access-Control-Allow-Origin" : {
+                  "schema" : {
+                    "type" : "string"
+                  }
+                },
+                "Access-Control-Allow-Methods" : {
+                  "schema" : {
+                    "type" : "string"
+                  }
+                },
+                "Access-Control-Allow-Headers" : {
+                  "schema" : {
+                    "type" : "string"
+                  }
+                }
+              },
+              "content" : {}
             }
           },
-          "requestTemplates" : {
-            "application/json" : "{\"statusCode\": 200}"
-          },
-          "passthroughBehavior" : "when_no_match"
+          "x-amazon-apigateway-integration" : {
+            "type" : "mock",
+            "responses" : {
+              "default" : {
+                "statusCode" : "200",
+                "responseParameters" : {
+                  "method.response.header.Access-Control-Allow-Methods" : "'GET,OPTIONS'",
+                  "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                  "method.response.header.Access-Control-Allow-Origin" : "'${local.cors_allowed_origin}'"
+                }
+              }
+            },
+            "requestTemplates" : {
+              "application/json" : "{\"statusCode\": 200}"
+            },
+            "passthroughBehavior" : "when_no_match"
+          }
         }
       }
-    },
+    }
     "components" : {
       "securitySchemes" : {
         "cognito" : {
