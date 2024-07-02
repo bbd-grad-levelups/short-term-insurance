@@ -2,15 +2,20 @@
   <section>
     <article>
       <section>
-        <button
+        <section>
+      </section>
+        <button mat-flat-button
           appPreventDoubleClick
           (debounceClick)="loginOnSubmit()"
           [disabled]="disableButtons"
+          class="login-button"
         >
-          <img src="google.svg" alt="logo" />
-          <span>Login with Google</span>
+        <!-- <img src="google.svg"/> -->
+          <span class="button-text">🔒 Sign in with Google</span>
+
         </button>
       </section>
     </article>
   </section>
 </article>
+

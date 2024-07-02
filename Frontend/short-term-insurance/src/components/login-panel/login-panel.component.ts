@@ -3,12 +3,14 @@ import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { DOCUMENT } from "@angular/common";
 import { environment } from "../../../environment";
 import { PreventDoubleClick } from "../../directives/prevent-double-click.directive";
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-login-panel',
   standalone: true,
   imports: [
     PreventDoubleClick,
+    MatButton,
   ],
   templateUrl: './login-panel.component.html',
   styleUrl: './login-panel.component.css'
