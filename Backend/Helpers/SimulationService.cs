@@ -1,6 +1,8 @@
+using System.Collections.Specialized;
+
 namespace Backend.Services;
 
-public record TimeEvents(bool NewMonth, bool NewYear);
+public record TimeEvents(bool NewMonth, bool NewYear, string NewDate);
 
 public interface ISimulationService
 {
@@ -26,8 +28,7 @@ public class SimulationService() : ISimulationService
     var newDate = CalculateTime();
     TimeEvents events = CompareDates(CurrentDate, newDate);
     CurrentDate = newDate;
-
-    return events;
+    return new TimeEvents(events.NewMonth, events.NewYear, newDate);
   }
 
   internal string CalculateTime()
@@ -41,7 +42,7 @@ public class SimulationService() : ISimulationService
     int days = (simDaysPassed % (12 * 30)) % 30;
 
     // Format the date as YY|MM|DD
-    string formattedDate = $"{years:00}|{months + 1:00}|{days + 1:00}";
+    string formattedDate = $"{years + 1:00}|{months + 1:00}|{days + 1:00}";
     return formattedDate;
   }
 
@@ -58,7 +59,7 @@ public class SimulationService() : ISimulationService
     bool isNewMonth = newMonth != oldMonth;
     bool isNewYear = newYear != oldYear;
 
-    return new TimeEvents(isNewMonth, isNewYear);
+    return new TimeEvents(isNewMonth, isNewYear, "");
   }
 
   public void Reset()

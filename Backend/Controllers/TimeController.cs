@@ -7,10 +7,9 @@ namespace Backend.Controllers;
 
 [Route("api")]
 [ApiController]
-public class TimeController(PersonaContext personaContext, LoggerContext loggerContext, IStockExchangeService stock, ITaxService tax, ISimulationService sim, ILogger<TimeController> logger) : ControllerBase
+public class TimeController(PersonaContext personaContext, IStockExchangeService stock, ITaxService tax, ISimulationService sim, ILogger<TimeController> logger) : ControllerBase
 {
   private readonly PersonaContext _personaContext = personaContext;
-  private readonly LoggerContext _loggerContext = loggerContext;
   private readonly IStockExchangeService _stock = stock;
   private readonly ITaxService _tax = tax;
   private readonly ISimulationService _simulation = sim;
@@ -43,7 +42,7 @@ public class TimeController(PersonaContext personaContext, LoggerContext loggerC
   public async Task<ActionResult> ReceiveSimReset()
   {
     await _personaContext.RemoveAll();
-    await _loggerContext.RemoveAll();
+    //await _loggerContext.RemoveAll();
 
     _simulation.Reset();
     _logger.LogInformation("Simulation reset!");

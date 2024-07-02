@@ -17,7 +17,7 @@ public class HangfireJobs(IStockExchangeService stock, IBankingService banking, 
     if (_simulation.IsRunning)
     {
       var events = _simulation.UpdateDate();
-
+      _logger.LogInformation("Current time: {newDate}", events.NewDate);
       if (events.NewMonth)
       {
         float profit = await _banking.RequestProfit();
