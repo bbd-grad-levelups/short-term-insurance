@@ -36,7 +36,7 @@ public class ElectronicsController(PersonaContext context, IBankingService banki
         bool currentlyInsured = _simulation.DaysSinceDate(persona.LastPaymentDate) < 32;
         if (currentlyInsured)
         {
-          double claimPayout = Insurance.CalculatePayout(electronicsClaimed);
+          long claimPayout = Insurance.CalculatePayout(electronicsClaimed);
           await _banking.MakeCommercialPayment(persona.PersonaId, claimPayout);
         }
 
@@ -104,7 +104,7 @@ public class ElectronicsController(PersonaContext context, IBankingService banki
   [HttpPatch("price")]
   public ActionResult UpdatePrice([FromBody] ModifyInsurancePrice request)
   {
-    Insurance.CurrentPrice = request.NewPrice;
+    Insurance.CurrentPrice = (long)request.NewPrice;
     _logger.LogInformation("Received new price for insurance: {CurrentPrice}", Insurance.CurrentPrice);
     return NoContent();
   }

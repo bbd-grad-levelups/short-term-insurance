@@ -31,4 +31,13 @@ public class HangfireJobs(IStockExchangeService stock, IBankingService banking, 
       }
     }
   }
+
+  public async Task<string> TestEndpoints()
+  {
+    //await _stock.Register();
+    //await _stock.SellStock("rr", 100);
+    //await _stock.RequestDividends(1000);
+    //await _banking.CreateRetailDebitOrder(1, 11);
+    return "Registration completed";
+  }
 }

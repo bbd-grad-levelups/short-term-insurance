@@ -2,14 +2,14 @@ namespace Backend.Helpers;
 
 public static class Insurance
 {
-  public static double CurrentPrice { get; set; }
+  public static long CurrentPrice { get; set; }
 
-  public static double CalculateInsurance(int electronicsAmount)
+  public static long CalculateInsurance(int electronicsAmount)
   {
-    return electronicsAmount * CurrentPrice * 1.2;
+    return (long)Math.Round(electronicsAmount * CurrentPrice * 1.2);
   }
 
-  public static double CalculatePayout(int destroyedAmount)
+  public static long CalculatePayout(int destroyedAmount)
   {
     return destroyedAmount * CurrentPrice;
   }

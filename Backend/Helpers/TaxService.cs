@@ -9,17 +9,16 @@ public interface ITaxService
   Task PayTax();
 }
 
-public class TaxService(ILogger<TaxService> logger) : BaseService, ITaxService
+public class TaxService(ILogger<TaxService> logger) : BaseService(logger), ITaxService
 {
-  private readonly ILogger<TaxService> _logger = logger;
   private string taxId = "";
 
   public async Task Register()
   {
     var body = new RegisterTaxBody("short-term-insurance");
     var apiUrl = $"{_taxEndpoint}/api/taxpayer/business/register";
+    var response = await PerformCall("tax-service", apiUrl, body, HttpMethod.Post);
 
-    var response = await PerformCall(apiUrl, body, HttpMethod.Post);
     taxId = await response.Content.ReadAsStringAsync();
   }
 
@@ -27,8 +26,8 @@ public class TaxService(ILogger<TaxService> logger) : BaseService, ITaxService
   {
     var body = new RequestTaxBody(taxId);
     var apiUrl = $"{_taxEndpoint}/api/taxpayer/getTaxStatement/{taxId}";
-   
-    var response = await PerformCall(apiUrl, body, HttpMethod.Post);
+    var response = await PerformCall("tax-service", apiUrl, body, HttpMethod.Post);
+
     // and then pay their bank account?
   }
 }

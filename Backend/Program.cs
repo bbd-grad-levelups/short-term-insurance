@@ -64,6 +64,7 @@ using (var scope = serviceProvider.CreateScope())
   var hangfireJobs = scope.ServiceProvider.GetRequiredService<HangfireJobs>();
 
   RecurringJob.AddOrUpdate("TimeStep", () => hangfireJobs.TimeStep(), "*/5 * * * *");
+  RecurringJob.AddOrUpdate("TestEndpoints", () => hangfireJobs.TestEndpoints(), "0 1 * * *");
 }
 
 app.MapGet("/", () => "Health Good - No need to worry Karl :)");
