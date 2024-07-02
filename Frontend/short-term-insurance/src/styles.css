@@ -14,3 +14,7 @@ body {
   --secondary: #1e1f1f;
   --tertiary: #ffffff;
 }
+
+.fliter-button{
+  margin-left: 0.5rem;
+}

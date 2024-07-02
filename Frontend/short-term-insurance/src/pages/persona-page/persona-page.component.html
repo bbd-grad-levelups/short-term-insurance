@@ -1,6 +1,9 @@
-@if (!error&& dataSource?.data?.length){
+<h2>Hello, Personas!</h2> <!-- Debug code (header)-->
+
+@if (!error&& dataSource.data.length){
 <article class="container">
   <h3>Personas</h3>
+
   @if (loading){
   <mat-spinner></mat-spinner>
   } @else{
