@@ -11,9 +11,10 @@ public record LogsPage(IEnumerable<Log> Logs, int Page, int PageSize, int Availa
 
 [Route("api")]
 [ApiController]
-public class FrontendController(PersonaContext context) : ControllerBase
+public class FrontendController(PersonaContext personaContext, LoggerContext loggerContext) : ControllerBase
 {
-  private readonly PersonaContext _context = context;
+  private readonly PersonaContext _personaContext = personaContext;
+  private readonly LoggerContext _loggerContext = loggerContext;
 
   /// <summary>
   /// Retrieves a list of personas, paginated.
@@ -28,9 +29,9 @@ public class FrontendController(PersonaContext context) : ControllerBase
   [HttpGet("personas")]
   public async Task<ActionResult<PersonaPage>> GetPersonas(int page = 1, int pageSize = 50)
   {
-    var totalPersonas = await _context.Personas.CountAsync();
+    var totalPersonas = await _personaContext.Personas.CountAsync();
     var totalPages = (int)Math.Ceiling(totalPersonas / (double)pageSize);
-    var personas = await _context.Personas
+    var personas = await _personaContext.Personas
                                 .OrderBy(x => x.PersonaId)
                                 .Skip((page - 1) * pageSize)
                                 .Take(pageSize)
@@ -51,12 +52,10 @@ public class FrontendController(PersonaContext context) : ControllerBase
     return Ok(personaPage);
   }
 
-  // Stubbed for now, possible logging endpoint for frontend
-
   /// <summary>
   /// Retrieves a list of logs, paginated.
   /// Admin frontend only, not useful to other services.
-  /// Times should be in format YYYY|MM|DD|HH|MM|SS
+  /// Times should be in format YYYY|MM|DD
   /// </summary>
   /// <remarks>
   /// This endpoint returns a paginated list of logs, based on search window.
@@ -69,29 +68,27 @@ public class FrontendController(PersonaContext context) : ControllerBase
   [HttpGet("log")]
   public async Task<ActionResult<LogsPage>> GetLog(string beginDate, string endDate, int page = 1, int pageSize = 50)
   {
-    var someLogs = new List<Log>()
-    {
-      new("2024|06|24", "Something happened"),
-      new("2024|06|25", "Something else happened")
-    };
+    beginDate = beginDate[2..].Replace('/', '|');
+    endDate = endDate[2..].Replace('/', '|');
+    var totalCount = await _loggerContext.Logs
+      .Where(x => string.Compare(x.TimeStamp, beginDate) >= 0 && string.Compare(x.TimeStamp, endDate) <= 0)
+      .CountAsync();
+    var logs = await _loggerContext.Logs
+                                .Where(x => string.Compare(x.TimeStamp, beginDate) >= 0 && string.Compare(x.TimeStamp, endDate) <= 0)
+                                .OrderBy(x => x.TimeStamp)
+                                .Skip((page - 1) * pageSize)
+                                .Take(pageSize)
+                                .ToListAsync();
+    var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
 
-    int totalLogs = await _context.Personas.CountAsync(); // Just to make "not async" shut up
-    totalLogs = 2;
-    int totalPages = 1;
-    //var totalPages = (int)Math.Ceiling(totalPersonas / (double)pageSize);
-    //var personas = await _personaContext.Personas
-    //                            .OrderBy(x => x.PersonaId)
-    //                            .Skip((page - 1) * pageSize)
-    //                            .Take(pageSize)
-    //                            .ToListAsync();
     IEnumerable<Log> results;
-    if (someLogs.Count == 0)
+    if (logs.Count == 0)
     {
       results = [];
     }
     else
     {
-      results = someLogs;
+      results = logs;
     }
     
     var logsPage = new LogsPage(results, page, pageSize, totalPages);

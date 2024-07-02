@@ -26,6 +26,7 @@ var connectionStringBuilder = new NpgsqlConnectionStringBuilder()
 };
 
 builder.Services.AddDbContext<PersonaContext>(opt => opt.UseNpgsql(connectionStringBuilder.ConnectionString));
+builder.Services.AddDbContext<LoggerContext>(opt => opt.UseNpgsql(connectionStringBuilder.ConnectionString));
 builder.Services.AddControllers();
 
 builder.Services.AddLogging();
