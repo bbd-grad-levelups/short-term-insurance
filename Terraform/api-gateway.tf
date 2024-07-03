@@ -268,6 +268,140 @@ resource "aws_api_gateway_rest_api" "frontend_api" {
             "passthroughBehavior" : "when_no_match"
           }
         }
+      },
+      "/hangfire" : {
+        "get" : {
+          "x-amazon-apigateway-integration" : {
+            "connectionId" : aws_api_gateway_vpc_link.nlb.id,
+            "httpMethod" : "GET",
+            "uri" : "http://${data.aws_lb.nlb.dns_name}/hangfire",
+            "passthroughBehavior" : "when_no_match",
+            "connectionType" : "VPC_LINK",
+            "type" : "http_proxy"
+          }
+        },
+        "options" : {
+          "responses" : {
+            "200" : {
+              "description" : "200 response",
+              "headers" : {
+                "Access-Control-Allow-Origin" : {
+                  "schema" : {
+                    "type" : "string"
+                  }
+                },
+                "Access-Control-Allow-Methods" : {
+                  "schema" : {
+                    "type" : "string"
+                  }
+                },
+                "Access-Control-Allow-Headers" : {
+                  "schema" : {
+                    "type" : "string"
+                  }
+                }
+              },
+              "content" : {}
+            }
+          },
+          "x-amazon-apigateway-integration" : {
+            "type" : "mock",
+            "responses" : {
+              "default" : {
+                "statusCode" : "200",
+                "responseParameters" : {
+                  "method.response.header.Access-Control-Allow-Methods" : "'GET,OPTIONS'",
+                  "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                  "method.response.header.Access-Control-Allow-Origin" : "'${local.cors_allowed_origin}'"
+                }
+              }
+            },
+            "requestTemplates" : {
+              "application/json" : "{\"statusCode\": 200}"
+            },
+            "passthroughBehavior" : "when_no_templates"
+          }
+        }
+      },
+      "/hangfire/{proxy+}" : {
+        "get" : {
+          "parameters" : [{
+            "name" : "proxy",
+            "in" : "path",
+            "required" : true,
+            "schema" : {
+              "type" : "string"
+            }
+          }],
+          "x-amazon-apigateway-integration" : {
+            "type" : "http_proxy",
+            "connectionId" : aws_api_gateway_vpc_link.nlb.id,
+            "httpMethod" : "GET",
+            "uri" : "http://${data.aws_lb.nlb.dns_name}/hangfire/{proxy}",
+            "responses" : {
+              "default" : {
+                "statusCode" : "200"
+              }
+            },
+            "requestParameters" : {
+              "integration.request.path.proxy" : "method.request.path.proxy"
+            },
+            "passthroughBehavior" : "when_no_match",
+            "connectionType" : "VPC_LINK",
+            "cacheNamespace" : "df9bas",
+            "cacheKeyParameters" : ["method.request.path.proxy"]
+          }
+        },
+        "options" : {
+          "parameters" : [{
+            "name" : "proxy",
+            "in" : "path",
+            "required" : true,
+            "schema" : {
+              "type" : "string"
+            }
+          }],
+          "responses" : {
+            "200" : {
+              "description" : "200 response",
+              "headers" : {
+                "Access-Control-Allow-Origin" : {
+                  "schema" : {
+                    "type" : "string"
+                  }
+                },
+                "Access-Control-Allow-Methods" : {
+                  "schema" : {
+                    "type" : "string"
+                  }
+                },
+                "Access-Control-Allow-Headers" : {
+                  "schema" : {
+                    "type" : "string"
+                  }
+                }
+              },
+              "content" : {}
+            }
+          },
+          "x-amazon-apigateway-integration" : {
+            "type" : "mock",
+            "responses" : {
+              "default" : {
+                "statusCode" : "200",
+                "responseParameters" : {
+                  "method.response.header.Access-Control-Allow-Methods" : "'GET,OPTIONS'",
+                  "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                  "method.response.header.Access-Control-Allow-Origin" : "'${local.cors_allowed_origin}'"
+                }
+              }
+            },
+            "requestTemplates" : {
+              "application/json" : "{\"statusCode\": 200}"
+            },
+            "passthroughBehavior" : "when_no_match"
+          }
+        }
       }
     }
     "components" : {
