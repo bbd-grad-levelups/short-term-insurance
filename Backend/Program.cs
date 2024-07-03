@@ -34,7 +34,7 @@ builder.Services.AddLogging();
 builder.Services.AddSingleton<ISimulationService, SimulationService>();
 builder.Services.AddScoped<IBankingService, BankingService>();
 builder.Services.AddScoped<IStockExchangeService, StockExchangeService>();
-builder.Services.AddScoped<ITaxService, TaxService>();
+builder.Services.AddSingleton<ITaxService, TaxService>();
 
 builder.Services.AddCors(options =>
 {
@@ -75,7 +75,6 @@ using (var scope = serviceProvider.CreateScope())
   var hangfireJobs = scope.ServiceProvider.GetRequiredService<HangfireJobs>();
 
   RecurringJob.AddOrUpdate("TimeStep", () => hangfireJobs.TimeStep(), "*/5 * * * *");
-  RecurringJob.AddOrUpdate("HealthCheck", () => hangfireJobs.CallHealth(), Cron.Minutely);
   RecurringJob.AddOrUpdate("TestEndpoints", () => hangfireJobs.TestEndpoints(), "0 1 * * *");
 }
 

@@ -9,10 +9,11 @@ using Newtonsoft.Json;
 
 namespace Backend.Jobs;
 
-public class HangfireJobs(IStockExchangeService stock, IBankingService banking, ISimulationService sim, ILogger<HangfireJobs> logger) : ControllerBase
+public class HangfireJobs(IStockExchangeService stock, IBankingService banking, ISimulationService sim, ITaxService tax, ILogger<HangfireJobs> logger) : ControllerBase
 {
   private readonly IStockExchangeService _stock = stock;
   private readonly ILogger<HangfireJobs> _logger = logger;
+  private readonly ITaxService _taxService = tax;
   private readonly ISimulationService _simulation = sim;
   private readonly IBankingService _banking = banking;
 
@@ -27,8 +28,9 @@ public class HangfireJobs(IStockExchangeService stock, IBankingService banking, 
       _logger.LogInformation("Current time: {newDate}", events.NewDate);
       if (events.NewMonth)
       {
-        float profit = await _banking.RequestProfit();
+        int profit = _taxService.Profit;
         await _stock.RequestDividends(profit);
+        _taxService.Profit = 0;
         _logger.LogInformation("Requested Dividends payout for monthly profit: {profit}", profit);
       }
 
