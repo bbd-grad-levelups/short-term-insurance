@@ -39,13 +39,11 @@
     box-shadow: 1px 1px;;
 }
 
-.box{
-    /* width: 300px; */
-    border: 0.125rem solid gray;
-    background-color: rgba(181, 181, 181, 0.15);
-    /* padding: 5%; */
-    /* margin: 1.25rem; */
-    border-radius: 5px;
+.logs-header{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: x-large;
 }
 
 .mat-column-timeStamp {
@@ -57,3 +55,21 @@
     overflow-x: hidden;
     overflow: hidden;
 }
+
+.dates-section{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.full-width{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    width: auto;
+  }
