@@ -9,13 +9,13 @@ namespace Backend.Controllers;
 
 [Route("api/banking")]
 [ApiController]
-public class BankingController(PersonaContext context, LoggerContext logCon, ISimulationService simulation, ITaxService tax, ILogger logger) : ControllerBase
+public class BankingController(PersonaContext context, LoggerContext logCon, ISimulationService simulation, ITaxService tax, ILogger<BankingController> logger) : ControllerBase
 {
   private readonly PersonaContext _context = context;
   private readonly LoggerContext _logCon = logCon;
   private readonly ISimulationService _simulation = simulation;
   private readonly ITaxService _taxService = tax;
-  private readonly ILogger _logger = logger;
+  private readonly ILogger<BankingController> _logger = logger;
 
   /// <summary>
   /// Endpoint to receive debit order payment success from bank. (Not finalised)
@@ -25,8 +25,6 @@ public class BankingController(PersonaContext context, LoggerContext logCon, ISi
   [HttpPost("commercial")]
   public async Task<ActionResult> ReceiveCommercialBankNotification([FromBody] BankNotification request)
   {
-    // This is now only for receiving payment notificationss
-    // Stubbed for now. This check will probably use the debitOrderId in the reference.
     Log log;
     if (request.Type.Equals("incoming_payment"))
     {

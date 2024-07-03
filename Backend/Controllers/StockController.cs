@@ -22,8 +22,9 @@ public class StockController(IStockExchangeService stock, IBankingService bankin
   public async Task<ActionResult> ReceiveStockRegistration([FromBody] RegisterStockResponse request)
   {
     _logger.LogInformation("Stock Exchange registration successful (ID: {tradingId}). Registering initial company stock on the Stock Exchange", request.TradingId);
-    
-    await _stock.SellStock(request.TradingId, 10000);
+    _stock.ReceiveRegistration(request);
+
+    await _stock.SellStock(10000);
     return Ok();
   }
 
@@ -37,7 +38,7 @@ public class StockController(IStockExchangeService stock, IBankingService bankin
   {
     _logger.LogInformation("Received dividends payment reference {ReferenceId}, making payment", request.ReferenceId);
 
-    await _banking.MakeCommercialPayment(request.ReferenceId);
+    await _banking.MakeCommercialPayment("stock_exchange", request.ReferenceId, _stock.GetLastDividends());
     return Ok();
   }
 }

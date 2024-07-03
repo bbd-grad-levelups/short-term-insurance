@@ -26,9 +26,9 @@ public class ElectronicsController(PersonaContext context, LoggerContext logCon,
   [HttpPatch("")]
   public async Task<ActionResult> RemoveElectronics([FromBody] DestroyedElectronics request)
   {
-    
     if (request.AmountDestroyed > 0)
     {
+      Log myLog;
       var persona = await _context.Personas.FirstOrDefaultAsync(p => p.PersonaId == request.PersonaId);
 
       if (persona != null)
@@ -38,24 +38,25 @@ public class ElectronicsController(PersonaContext context, LoggerContext logCon,
         if (currentlyInsured)
         {
           long claimPayout = Insurance.CalculatePayout(electronicsClaimed);
-          await _banking.MakeCommercialPayment(persona.PersonaId, claimPayout);
+          await _banking.MakeCommercialPayment(persona.PersonaId.ToString(), "Electronics insurance payout.", claimPayout);
         }
 
         persona.Electronics -= electronicsClaimed;
 
         var newPremium = Insurance.CalculateInsurance(persona.Electronics);
+        await _banking.CancelDebitOrder(persona.DebitOrderId);
         int newDebitId = await _banking.CreateRetailDebitOrder(persona.PersonaId, newPremium);
         persona.DebitOrderId = newDebitId;
         await _context.SaveChangesAsync();
         
-        _logger.LogInformation("Received claim for {personaId}, paid out: {claimPaid}", persona.PersonaId, currentlyInsured);
+        myLog = new Log(_simulation.CurrentDate, $"Received claim for {persona.PersonaId}, paid out: {currentlyInsured}");
       }
       else
       {
         _logger.LogInformation("Received claim for persona {personaId} that doesn't have insurance", request.PersonaId);
+        myLog = new Log(_simulation.CurrentDate, $"Received claim for persona {request.PersonaId} that doesn't have insurance");
       }
 
-      var myLog = new Log(_simulation.CurrentDate, $"Received claim for persona {request.PersonaId} that doesn't have insurance");
       loggerContext.Add(myLog);
       await loggerContext.SaveChangesAsync();
     }
@@ -98,7 +99,6 @@ public class ElectronicsController(PersonaContext context, LoggerContext logCon,
       var myLog = new Log(_simulation.CurrentDate, $"Received new insurance request ({request.AmountNew} electronics) for {currentPersona.PersonaId}");
       loggerContext.Add(myLog);
       await loggerContext.SaveChangesAsync();
-      _logger.LogInformation("Received new insurance request ({AmountNew} electronics) for {personaId}", request.AmountNew, currentPersona.PersonaId);
     }
 
     return NoContent();
@@ -113,8 +113,6 @@ public class ElectronicsController(PersonaContext context, LoggerContext logCon,
   public async Task<ActionResult> UpdatePrice([FromBody] ModifyInsurancePrice request)
   {
     Insurance.CurrentPrice = (long)request.NewPrice;
-    _logger.LogInformation("Received new price for insurance: {CurrentPrice}", Insurance.CurrentPrice);
-
     var myLog = new Log(_simulation.CurrentDate, $"Received new price for insurance: {Insurance.CurrentPrice}");
     loggerContext.Add(myLog);
     await loggerContext.SaveChangesAsync();

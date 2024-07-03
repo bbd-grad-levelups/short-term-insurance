@@ -1,5 +1,3 @@
-using System.Collections.Specialized;
-
 namespace Backend.Services;
 
 public record TimeEvents(bool NewMonth, bool NewYear, string NewDate);
@@ -38,8 +36,8 @@ public class SimulationService() : ISimulationService
     int simDaysPassed = (int)Math.Round(timePassed.TotalMinutes) / 2;
 
     int years = simDaysPassed / (12 * 30);
-    int months = (simDaysPassed % (12 * 30)) / 30;
-    int days = (simDaysPassed % (12 * 30)) % 30;
+    int months = simDaysPassed % (12 * 30) / 30;
+    int days = simDaysPassed % (12 * 30) % 30;
 
     // Format the date as YY|MM|DD
     string formattedDate = $"{years + 1:00}|{months + 1:00}|{days + 1:00}";

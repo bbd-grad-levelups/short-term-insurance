@@ -53,7 +53,7 @@ builder.Services.AddHangfire(config =>
     options.UseNpgsqlConnection(connectionStringBuilder.ConnectionString);
   });
 });
-builder.Services.AddScoped<HangfireJobs>();
+builder.Services.AddScoped<TimedJobs>();
 builder.Services.AddHangfireServer();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -72,10 +72,9 @@ app.UseHangfireDashboard();
 var serviceProvider = app.Services;
 using (var scope = serviceProvider.CreateScope())
 {
-  var hangfireJobs = scope.ServiceProvider.GetRequiredService<HangfireJobs>();
+  var hangfireJobs = scope.ServiceProvider.GetRequiredService<TimedJobs>();
 
   RecurringJob.AddOrUpdate("TimeStep", () => hangfireJobs.TimeStep(), "*/5 * * * *");
-  RecurringJob.AddOrUpdate("TestEndpoints", () => hangfireJobs.TestEndpoints(), "0 1 * * *");
 }
 
 app.UseCors("CORS");

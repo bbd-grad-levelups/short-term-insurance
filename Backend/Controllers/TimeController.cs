@@ -24,30 +24,29 @@ public class TimeController(PersonaContext personaContext, LoggerContext loggerC
   [HttpPost("time")]
   public async Task<ActionResult> ReceiveStartSim([FromBody] TimeRequest request)
   {
-    Console.WriteLine("Sim start console log");
+    Log myLog;
     if (request.Action.Equals("start"))
     {
-      _logger.LogInformation("Starting simulation! Good luck...");
       _simulation.StartSim(request.StartTime ?? DateTime.Now);
 
-      _logger.LogInformation("Registering Short Term Insurance on the stock exchange.");
       await _stock.Register();
-
-      _logger.LogInformation("Registering Short Term Insurance on the revenue service.");
       await _tax.Register();
 
-      var myLog = new Log(_simulation.CurrentDate, $"Starting simulation! Good luck... Time: {DateTime.Now}");
-      loggerContext.Add(myLog);
-      await loggerContext.SaveChangesAsync();
+      myLog = new Log(_simulation.CurrentDate, $"Starting simulation! Good luck... Time: {DateTime.Now}");
+      
     }
     else
     {
       _simulation.Reset();
       await _personaContext.RemoveAll();
       await _loggerContext.RemoveAll();
-      _logger.LogInformation("Simulation reset!");
+
+      myLog = new Log(_simulation.CurrentDate, "Simulation reset!");
     }
-    
+
+    _loggerContext.Add(myLog);
+    await _loggerContext.SaveChangesAsync();
+
     return Ok();
   } 
 }

@@ -2,7 +2,6 @@ using Newtonsoft.Json;
 
 using System.Net;
 using System.Net.Http.Headers;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace Backend.Services;
@@ -30,11 +29,8 @@ public class BaseService(ILogger<BaseService> logger)
   {
     try
     {
-
-      var jsonBody = JsonConvert.SerializeObject(body);
-      var content = new StringContent(jsonBody, System.Text.Encoding.UTF8, "application/json");
+      var content = new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json");
       content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
       var request = new HttpRequestMessage(method, url)
       {
         Content = content
@@ -67,28 +63,4 @@ public class BaseService(ILogger<BaseService> logger)
       return new HttpResponseMessage(HttpStatusCode.InternalServerError);
     }
   }
-
-  internal static string RemoveBeginEndCertificate(string cert)
-  {
-    const string beginCert = "-----BEGIN CERTIFICATE-----";
-    const string endCert = "-----END CERTIFICATE-----";
-
-    cert = cert.Replace(beginCert, string.Empty, StringComparison.OrdinalIgnoreCase);
-    cert = cert.Replace(endCert, string.Empty, StringComparison.OrdinalIgnoreCase);
-    cert = cert.Replace("\n", string.Empty).Replace("\r", string.Empty); 
-    return cert.Trim();
-  }
-
-  //public static void SaveCertToEnv()
-  //{
-  //  var certPath = @"C:\Users\bbdnet2824\Downloads\short_term_insurance.pfx";
-  //  // Read the PFX certificate file as bytes
-  //  byte[] certBytes = File.ReadAllBytes(certPath);
-
-  //  // Convert the bytes to base64 string
-  //  string base64Cert = Convert.ToBase64String(certBytes);
-
-  //  // Set the environment variable
-  //  Environment.SetEnvironmentVariable("MTLS_CERT", base64Cert, EnvironmentVariableTarget.User);
-  //}
 }
