@@ -1,75 +1,77 @@
 .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 1rem;
-    margin-bottom: 2rem;
-    overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  overflow-y: auto;
 }
 
 .pagination {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
 }
 
-.button-container{
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.button-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.date-picker{
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.date-picker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.date-picker-button{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    /* margin-top: 0.003rem; */
+.date-picker-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* margin-top: 0.003rem; */
 }
 
-.date-picker-component{
-    box-shadow: 1px 1px;;
+.date-picker-component {
+  box-shadow: 1px 1px;
 }
 
-.logs-header{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: x-large;
+.logs-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: x-large;
 }
 
 .mat-column-timeStamp {
-    width: auto;
+  width: auto;
 }
 
 .mat-column-message {
-    font-style: italic;
-    overflow-x: hidden;
-    overflow: hidden;
+  font-style: italic;
+  overflow-x: hidden;
+  overflow: hidden;
 }
 
-.dates-section{
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+.dates-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 0 1rem;
+  flex-wrap: wrap;
 }
 
-.full-width{
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+.full-width {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .form-container {
-    display: flex;
-    flex-direction: column;
-    width: auto;
-  }
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
