@@ -36,7 +36,9 @@ export class PersonaPageComponent {
   error: boolean = false;
   loading: boolean = true;
   isLastPage: boolean = false;
+  isFirstPage: boolean = true;
   page: number = 1;
+  availablePages: number = 1;
 
   constructor(
     private insuranceService: InsuranceService,
@@ -47,18 +49,16 @@ export class PersonaPageComponent {
     this.getPersonaData();
   }
 
-  getPersonaData(nextPage: boolean = false) {
+  getPersonaData() {
     this.error = false;
     this.loading = true;
     this.insuranceService.getPersonas(this.page)
       .subscribe({
         next: response => {
+          // console.log(response);
+          this.isFirstPage = response.page === 1;
           this.isLastPage = response.page === response.availablePages;
-          if (nextPage && this.isLastPage) {
-            this.page--;
-            this.snackBar.open('On Last Page.', 'Ok', { "duration": 4000 });
-            return;
-          }
+          this.availablePages = response.availablePages;
           this.dataSource = new MatTableDataSource<Persona>(response.data);
           this.loading = false;
         },
@@ -84,6 +84,6 @@ export class PersonaPageComponent {
 
   nextPage() {
     this.page++;
-    this.getPersonaData(true)
+    this.getPersonaData()
   }
 }

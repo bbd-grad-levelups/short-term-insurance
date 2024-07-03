@@ -21,7 +21,13 @@ export class InsuranceService {
     ).pipe(
       map((response) => {
         return {
-          data: response.personas,
+          data: response.personas.map((persona: any) => {
+            return {
+              personaId: persona.personaId,
+              electronics: persona.electronics,
+              blacklisted: this.isBlacklisted(persona.lastPaymentDate)
+            }
+          }),
           page: response.page,
           availablePages: response.availablePages,
           pageSize: response.pageSize
@@ -43,5 +49,17 @@ export class InsuranceService {
         }
       })
     )
+  }
+
+  isBlacklisted(lastPaymentDate: string): boolean {
+    const BUFFER = 30 * 24 * 60 * 60 * 1000;
+    const lastPayment = new Date(lastPaymentDate.replace(/\|/g, "/"));
+    const currentDate = new Date();
+
+    const diffTime = currentDate.getTime() - lastPayment.getTime();
+    if (diffTime > BUFFER) {
+      return true;
+    }
+    return false;
   }
 }
