@@ -35,6 +35,10 @@ public class TimeController(PersonaContext personaContext, LoggerContext loggerC
 
       _logger.LogInformation("Registering Short Term Insurance on the revenue service.");
       await _tax.Register();
+
+      var myLog = new Log(_simulation.CurrentDate, $"Starting simulation! Good luck... Time: {DateTime.Now}");
+      loggerContext.Add(myLog);
+      await loggerContext.SaveChangesAsync();
     }
     else
     {

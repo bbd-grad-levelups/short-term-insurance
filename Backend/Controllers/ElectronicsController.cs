@@ -54,6 +54,10 @@ public class ElectronicsController(PersonaContext context, LoggerContext logCon,
       {
         _logger.LogInformation("Received claim for persona {personaId} that doesn't have insurance", request.PersonaId);
       }
+
+      var myLog = new Log(_simulation.CurrentDate, $"Received claim for persona {request.PersonaId} that doesn't have insurance");
+      loggerContext.Add(myLog);
+      await loggerContext.SaveChangesAsync();
     }
 
     return NoContent();
@@ -91,6 +95,9 @@ public class ElectronicsController(PersonaContext context, LoggerContext logCon,
       currentPersona.DebitOrderId = newDebitId;
       await _context.SaveChangesAsync();
 
+      var myLog = new Log(_simulation.CurrentDate, $"Received new insurance request ({request.AmountNew} electronics) for {currentPersona.PersonaId}");
+      loggerContext.Add(myLog);
+      await loggerContext.SaveChangesAsync();
       _logger.LogInformation("Received new insurance request ({AmountNew} electronics) for {personaId}", request.AmountNew, currentPersona.PersonaId);
     }
 
@@ -103,10 +110,14 @@ public class ElectronicsController(PersonaContext context, LoggerContext logCon,
   /// <param name="request"></param>
   /// <returns></returns>
   [HttpPatch("price")]
-  public ActionResult UpdatePrice([FromBody] ModifyInsurancePrice request)
+  public async Task<ActionResult> UpdatePrice([FromBody] ModifyInsurancePrice request)
   {
     Insurance.CurrentPrice = (long)request.NewPrice;
     _logger.LogInformation("Received new price for insurance: {CurrentPrice}", Insurance.CurrentPrice);
+
+    var myLog = new Log(_simulation.CurrentDate, $"Received new price for insurance: {Insurance.CurrentPrice}");
+    loggerContext.Add(myLog);
+    await loggerContext.SaveChangesAsync();
     return NoContent();
   }
 }

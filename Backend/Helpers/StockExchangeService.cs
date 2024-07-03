@@ -13,20 +13,20 @@ public interface IStockExchangeService
 
 public class StockExchangeService(ILogger<StockExchangeService> logger) : BaseService(logger), IStockExchangeService
 {
-  private readonly string registerCallback = "https://api.insurance.projects.bbdgrad.com/api/stock/registered";
-  private readonly string dividendsCallback = "https://api.insurance.projects.bbdgrad.com/api/stock/dividends";
+  private readonly string registerCallback = "'https://api.insurance.projects.bbdgrad.com/api/stock/registered'";
+  private readonly string dividendsCallback = "'https://api.insurance.projects.bbdgrad.com/api/stock/dividends'";
 
   public async Task Register()
   {
     var body = new RegisterBody("NoChoice", "ShortTermInsurance");
-    string apiUrl = $"{_exchangeEndpoint}/businesses?callbackUrl={registerCallback}";
+    string apiUrl = $"{_exchangeEndpoint}/businesses?callBackUrl={registerCallback}";
     await PerformCall("stock-exchange", apiUrl, body, HttpMethod.Post);
   }
 
   public async Task RequestDividends(float profit)
   {
     var body = new DividendsBody("ShortTermInsurance", profit);
-    string apiUrl = $"{_exchangeEndpoint}/dividends?callbackUrl={dividendsCallback}";
+    string apiUrl = $"{_exchangeEndpoint}/dividends?callBackUrl={dividendsCallback}";
     await PerformCall("stock-exchange", apiUrl, body, HttpMethod.Post);
   }
 
