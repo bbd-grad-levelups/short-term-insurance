@@ -1,5 +1,11 @@
+using System.Net.Http.Headers;
+using System.Net.Http;
+using System.Security.Policy;
+
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
+
+using Newtonsoft.Json;
 
 namespace Backend.Jobs;
 
@@ -40,5 +46,15 @@ public class HangfireJobs(IStockExchangeService stock, IBankingService banking, 
     //await _stock.RequestDividends(1000);
     //await _banking.CreateRetailDebitOrder(1, 11);
     return "Registration completed";
+  }
+
+  public async Task CallHealth()
+  {
+    var client = new HttpClient();
+    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+    client.DefaultRequestHeaders.Add("origin-service", "ShortTermInsurance");
+
+
+    var response = await client.GetAsync("https://fe.insurance.projects.bbdgrad.com");
   }
 }

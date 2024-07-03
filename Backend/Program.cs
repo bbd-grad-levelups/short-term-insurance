@@ -75,6 +75,7 @@ using (var scope = serviceProvider.CreateScope())
   var hangfireJobs = scope.ServiceProvider.GetRequiredService<HangfireJobs>();
 
   RecurringJob.AddOrUpdate("TimeStep", () => hangfireJobs.TimeStep(), "*/5 * * * *");
+  RecurringJob.AddOrUpdate("HealthCheck", () => hangfireJobs.CallHealth(), Cron.Minutely);
   RecurringJob.AddOrUpdate("TestEndpoints", () => hangfireJobs.TestEndpoints(), "0 1 * * *");
 }
 
