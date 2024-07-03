@@ -10,14 +10,14 @@ body {
 }
 
 :root {
-  --primary: #d25073;
+  --primary: #509ad2;
   --secondary: #1e1f1f;
   --tertiary: #ffffff;
 }
 
 .fliter-button {
   margin-left: 0.5rem;
-  background-color: #d25073 !important;
+  background-color: var(--secondary) !important;
 }
 
 .error-container {

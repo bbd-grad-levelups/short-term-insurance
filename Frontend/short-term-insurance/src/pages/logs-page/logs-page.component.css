@@ -14,6 +14,12 @@
     gap: 1rem;
 }
 
+.button-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .date-picker{
     display: flex;
     align-items: center;
