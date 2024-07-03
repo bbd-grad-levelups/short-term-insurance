@@ -72,7 +72,7 @@ export class LogsPageComponent {
   beginDate: Date | null = null;
 
   startDateFormControl = new FormControl('0001/01/01', [Validators.required]);
-  endDateFormControl = new FormControl('0001/02/05', [Validators.required]);
+  endDateFormControl = new FormControl('0001/01/05', [Validators.required]);
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -84,10 +84,21 @@ export class LogsPageComponent {
     this.getLogsData();
   }
 
+
+  checkDate(start: any, end:any){
+    console.log(start);
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    if (startDate >= endDate) {
+      return false;
+    }
+    return true;
+  }
+
   submitFilter() {
     console.log("filter")
     if (this.startDateFormControl.invalid || this.endDateFormControl.invalid) return;
-
+    if (this.checkDate(this.startDateFormControl.value, this.endDateFormControl.value) == false) return;
     this.getLogsData()
   }
 

@@ -9,7 +9,7 @@
           type="date"
           matInput
           [formControl]="startDateFormControl"
-          placeholder="Ex. In Progress"
+          min="0001-01-01" max="9999-12-29"
         />
       </mat-form-field>
       <mat-form-field class="full-width" color="accent">
@@ -18,13 +18,13 @@
           type="date"
           matInput
           [formControl]="endDateFormControl"
-          placeholder="Ex. In Progress"
-        />
+          min="0001-01-01" max="9999-12-29"        />
       </mat-form-field>
       <button mat-flat-button type="submit" class="fliter-button">
         Filter dates
       </button>
     </form>
+
   </section>
   @if (loading){
   <mat-spinner></mat-spinner>
