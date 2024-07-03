@@ -15,7 +15,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 
 import { JsonPipe } from '@angular/common';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { L } from '@angular/cdk/keycodes';
 import { MatInputModule } from '@angular/material/input';
 
 @Component({
@@ -29,10 +28,10 @@ import { MatInputModule } from '@angular/material/input';
     MatTableModule,
     MatFormFieldModule,
     MatDatepickerModule,
-    MatFormFieldModule, 
-    MatDatepickerModule, 
-    FormsModule, 
-    ReactiveFormsModule, 
+    MatFormFieldModule,
+    MatDatepickerModule,
+    FormsModule,
+    ReactiveFormsModule,
     JsonPipe,
     MatInputModule],
 
@@ -45,19 +44,6 @@ export class LogsPageComponent {
   @ViewChild(MatPaginator) paginator: MatPaginator = new MatPaginator(
     new MatPaginatorIntl(), ChangeDetectorRef.prototype
   );
-  today = new Date();
-  aWeekAgo = this.today.getDate() - 7;
-  tempWeek = new Date();
-  initLastWeek = new Date(this.tempWeek.setDate(this.aWeekAgo));
-  // readonly range = new FormGroup({
-  //   start: new FormControl<Date>(this.initLastWeek),
-  //   end: new FormControl<Date>(new Date()),
-  // });
-
-  readonly date = new FormGroup({
-    startDate: new FormControl<Date>(this.initLastWeek),
-    endDate: new FormControl<Date>(new Date())
-    });
 
   dataSource: MatTableDataSource<Logs> = new MatTableDataSource<Logs>();
 
@@ -71,8 +57,16 @@ export class LogsPageComponent {
   endDate: Date | null = null;
   beginDate: Date | null = null;
 
-  startDateFormControl = new FormControl('0001/01/01', [Validators.required]);
-  endDateFormControl = new FormControl('0001/01/05', [Validators.required]);
+  startDateFormControl = new FormControl('0001-01-01', 
+    [
+      Validators.required, 
+      Validators.pattern('[0-9]{4}-[0-9]{2}-[0-9]{2}')
+    ]);
+  endDateFormControl = new FormControl('0001-01-05', 
+    [
+      Validators.required,
+      Validators.pattern('[0-9]{4}-[0-9]{2}-[0-9]{2}'),
+    ]);
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -85,7 +79,7 @@ export class LogsPageComponent {
   }
 
 
-  checkDate(start: any, end:any){
+  checkDate(start: any, end: any) {
     const startDate = new Date(start);
     const endDate = new Date(end);
     if (startDate >= endDate) {
@@ -96,7 +90,11 @@ export class LogsPageComponent {
 
   submitFilter() {
     if (this.startDateFormControl.invalid || this.endDateFormControl.invalid) return;
-    if (this.checkDate(this.startDateFormControl.value, this.endDateFormControl.value) == false) return;
+    if (!this.checkDate(this.startDateFormControl.value, this.endDateFormControl.value)){
+      this.startDateFormControl.setErrors({ 'value': true });
+      this.endDateFormControl.setErrors({ 'value': true });
+      return;
+    }
     this.getLogsData()
   }
 

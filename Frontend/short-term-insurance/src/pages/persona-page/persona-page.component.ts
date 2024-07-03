@@ -32,7 +32,7 @@ export class PersonaPageComponent {
 
   dataSource: MatTableDataSource<Persona> = new MatTableDataSource<Persona>();
 
-  displayedColumns: string[] = ['personaId', 'electronics', 'blacklisted'];
+  displayedColumns: string[] = ['personaId', 'electronics', 'blacklisted', 'debitOrderId'];
   error: boolean = false;
   loading: boolean = true;
   isLastPage: boolean = false;
