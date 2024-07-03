@@ -86,7 +86,6 @@ export class LogsPageComponent {
 
 
   checkDate(start: any, end:any){
-    console.log(start);
     const startDate = new Date(start);
     const endDate = new Date(end);
     if (startDate >= endDate) {
@@ -96,7 +95,6 @@ export class LogsPageComponent {
   }
 
   submitFilter() {
-    console.log("filter")
     if (this.startDateFormControl.invalid || this.endDateFormControl.invalid) return;
     if (this.checkDate(this.startDateFormControl.value, this.endDateFormControl.value) == false) return;
     this.getLogsData()
