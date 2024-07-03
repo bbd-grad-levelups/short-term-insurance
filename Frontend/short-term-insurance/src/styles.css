@@ -15,9 +15,10 @@ body {
   --tertiary: #ffffff;
 }
 
-.fliter-button {
+.filter-button {
   margin-left: 0.5rem;
   background-color: var(--secondary) !important;
+  border-radius: 0.15rem !important;
 }
 
 .error-container {

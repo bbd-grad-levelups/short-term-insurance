@@ -55,7 +55,6 @@ export class PersonaPageComponent {
     this.insuranceService.getPersonas(this.page)
       .subscribe({
         next: response => {
-          // console.log(response);
           this.isFirstPage = response.page === 1;
           this.isLastPage = response.page === response.availablePages;
           this.availablePages = response.availablePages;
