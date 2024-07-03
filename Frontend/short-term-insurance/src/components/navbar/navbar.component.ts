@@ -65,12 +65,11 @@ export class NavbarComponent implements OnInit, AfterViewInit {
     });
 
     const lastVisitedRoute = sessionStorage.getItem('lastVisitedRoute');
-    console.log('Last visited route:', lastVisitedRoute);
-    if (lastVisitedRoute) {
-      this.router.navigateByUrl(lastVisitedRoute);
-    } else {
-      console.log('No last visited route found, redirecting to persona');
+    if (lastVisitedRoute === '/home') {
       this.router.navigate(['/home', { outlets: { 'navBar': ['persona'] } }]);
+    }
+    else if (lastVisitedRoute) {
+      this.router.navigateByUrl(lastVisitedRoute);
     }
   }
 

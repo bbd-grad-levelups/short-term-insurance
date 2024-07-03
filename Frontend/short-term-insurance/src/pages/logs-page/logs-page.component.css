@@ -5,6 +5,8 @@
     justify-content: space-between;
     gap: 1rem;
     padding: 1rem;
+    margin-bottom: 2rem;
+    overflow-y: auto;
 }
 
 .pagination {
@@ -44,4 +46,14 @@
     /* padding: 5%; */
     /* margin: 1.25rem; */
     border-radius: 5px;
+}
+
+.mat-column-timeStamp {
+    width: auto;
+}
+
+.mat-column-message {
+    font-style: italic;
+    overflow-x: hidden;
+    overflow: hidden;
 }

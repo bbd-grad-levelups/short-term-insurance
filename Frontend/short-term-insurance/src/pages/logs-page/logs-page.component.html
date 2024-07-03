@@ -1,4 +1,4 @@
-@if (!error&& dataSource.data.length){
+@if (!error){
 <article class="container">
   <h3>Logs</h3>
   <section>
@@ -12,6 +12,7 @@
           min="0001-01-01" max="9999-12-29"
         />
       </mat-form-field>
+      
       <mat-form-field class="full-width" color="accent">
         <mat-label>End Date</mat-label>
         <input
@@ -49,9 +50,9 @@
   </table>
   } @if (dataSource.data.length){
   <section class="pagination">
-    @if (!isFirstPage){
     <button
       color="primary"
+      disabled="{{ isFirstPage }}"
       appPreventDoubleClick
       (debounceClick)="previousPage()"
       mat-icon-button
@@ -59,19 +60,17 @@
     >
       <mat-icon>arrow_back_ios</mat-icon>
     </button>
-    }
     <span>Page {{ page }} of {{ availablePages }}</span>
-    @if (!isLastPage){
-      <button
-            color="primary"
-            appPreventDoubleClick
-            (debounceClick)="nextPage()"
-            mat-icon-button
-            aria-label="Example icon button with a vertical three dot icon"
-          >
-            <mat-icon>arrow_forward_ios</mat-icon>
-          </button>
-    }
+    <button
+      color="primary"
+      disabled="{{ isLastPage }}"
+      appPreventDoubleClick
+      (debounceClick)="nextPage()"
+      mat-icon-button
+      aria-label="Example icon button with a vertical three dot icon"
+    >
+      <mat-icon>arrow_forward_ios</mat-icon>
+    </button>
   </section>
   }
 </article>

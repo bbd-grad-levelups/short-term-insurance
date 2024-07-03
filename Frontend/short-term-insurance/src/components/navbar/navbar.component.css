@@ -54,7 +54,8 @@ mat-sidenav button {
 }
 
 mat-sidenav-content {
-  padding: 2rem;
+  padding: 1rem;
+  
 }
 
 app-logo {

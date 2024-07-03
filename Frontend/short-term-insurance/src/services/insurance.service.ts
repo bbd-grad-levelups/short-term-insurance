@@ -17,7 +17,7 @@ export class InsuranceService {
 
   getPersonas(page: number): Observable<Pagination<Persona>> {
     return this.httpClient.get<any>(
-      `${this.baseUrl}/api/personas?page=${page}`
+      `${this.baseUrl}/api/personas?page=${page}&pageSize=5`
     ).pipe(
       map((response) => {
         return {
@@ -38,7 +38,7 @@ export class InsuranceService {
 
   getLogs(beginDate: string, endDate: string, page: number): Observable<Pagination<Logs>> {
     return this.httpClient.get<any>(
-      `${this.baseUrl}/api/log?beginDate=${beginDate}&endDate=${endDate}&page=${page}`
+      `${this.baseUrl}/api/log?beginDate=${beginDate}&endDate=${endDate}&page=${page}&pageSize=5`
     ).pipe(
       map((response) => {
         return {

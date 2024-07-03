@@ -1,4 +1,4 @@
-@if (!error&& dataSource.data.length){
+@if (!error){
 <article class="container">
   <h3>Personas</h3>
 
@@ -30,9 +30,9 @@
   </table>
   } @if (dataSource.data.length){
   <section class="pagination">
-    @if (!isFirstPage){
     <button
       color="primary"
+      disabled="{{ isFirstPage }}"
       appPreventDoubleClick
       (debounceClick)="previousPage()"
       mat-icon-button
@@ -40,11 +40,10 @@
     >
       <mat-icon>arrow_back_ios</mat-icon>
     </button>
-    }
     <span>Page {{ page }} of {{ availablePages }}</span>
-    @if (!isLastPage){
     <button
       color="primary"
+      disabled="{{ isLastPage }}"
       appPreventDoubleClick
       (debounceClick)="nextPage()"
       mat-icon-button
@@ -52,7 +51,6 @@
     >
       <mat-icon>arrow_forward_ios</mat-icon>
     </button>
-    }
   </section>
   }
 </article>
