@@ -16,3 +16,17 @@ resource "aws_elastic_beanstalk_application_version" "default" {
   key          = aws_s3_object.backend_beanstalk_default.id
   force_delete = true
 }
+
+resource "aws_secretsmanager_secret" "mtls_details" {
+  name = "mtls_details"
+}
+
+resource "aws_secretsmanager_secret_version" "mtls_details" {
+  secret_id     = aws_secretsmanager_secret.mtls_details.id
+  secret_string = jsonencode({ key = "dummy", cert = "dummy" })
+}
+
+data "aws_secretsmanager_secret_version" "mtls_details" {
+  secret_id  = aws_secretsmanager_secret.mtls_details.arn
+  depends_on = [aws_secretsmanager_secret_version.mtls_details]
+}

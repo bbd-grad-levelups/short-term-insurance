@@ -18,15 +18,6 @@ resource "aws_s3_bucket" "backend_beanstalk" {
   force_destroy = true
 }
 
-resource "aws_acm_certificate" "backend_beanstalk" {
-  domain_name       = "api.${var.domain_name}"
-  validation_method = "DNS"
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
 resource "aws_elastic_beanstalk_application" "backend_beanstalk" {
   name        = "api-app"
   description = "App for API"
@@ -50,132 +41,103 @@ resource "aws_elastic_beanstalk_environment" "backend_beanstalk" {
     namespace = "aws:ec2:vpc"
     name      = "VPCId"
     value     = module.vpc.vpc_id
-    resource  = ""
   }
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "IamInstanceProfile"
     value     = aws_iam_instance_profile.beanstalk_ec2.name
-    resource  = ""
   }
   setting {
     namespace = "aws:ec2:vpc"
     name      = "Subnets"
     value     = join(",", module.vpc.public_subnets)
-    resource  = ""
   }
   setting {
     namespace = "aws:ec2:instances"
     name      = "InstanceTypes"
     value     = "t3.micro"
-    resource  = ""
   }
   setting {
     namespace = "aws:elasticbeanstalk:healthreporting:system"
     name      = "SystemType"
     value     = "basic"
-    resource  = ""
   }
   setting {
     namespace = "aws:elasticbeanstalk:application"
     name      = "Application Healthcheck URL"
     value     = "/"
-    resource  = ""
   }
   setting {
     namespace = "aws:elasticbeanstalk:command"
     name      = "Timeout"
     value     = "60"
-    resource  = ""
   }
   setting {
     namespace = "aws:elasticbeanstalk:command"
     name      = "IgnoreHealthCheck"
     value     = "true"
-    resource  = ""
   }
   setting {
     namespace = "aws:elasticbeanstalk:managedactions"
     name      = "ManagedActionsEnabled"
     value     = "false"
-    resource  = ""
-  }
-  setting {
-    namespace = "aws:elasticbeanstalk:application:environment"
-    name      = "SERVER_PORT"
-    value     = "5000"
-    resource  = ""
-  }
-  setting {
-    namespace = "aws:elasticbeanstalk:environment"
-    name      = "EnvironmentType"
-    value     = "LoadBalanced"
-    resource  = ""
-  }
-  setting {
-    namespace = "aws:elasticbeanstalk:environment"
-    name      = "LoadBalancerType"
-    value     = "application"
-    resource  = ""
-  }
-  setting {
-    namespace = "aws:elbv2:listener:80"
-    name      = "ListenerEnabled"
-    value     = "false"
-    resource  = ""
-  }
-  setting {
-    namespace = "aws:elbv2:listener:80"
-    name      = "Protocol"
-    value     = "HTTP"
-    resource  = ""
-  }
-  setting {
-    namespace = "aws:elbv2:listener:443"
-    name      = "ListenerEnabled"
-    value     = "true"
-    resource  = ""
-  }
-  setting {
-    namespace = "aws:elbv2:listener:443"
-    name      = "Protocol"
-    value     = "HTTPS"
-    resource  = ""
-  }
-  setting {
-    namespace = "aws:elbv2:listener:443"
-    name      = "SSLCertificateArns"
-    value     = aws_acm_certificate.backend_beanstalk.arn
-    resource  = ""
   }
   setting {
     namespace = "aws:ec2:vpc"
     name      = "AssociatePublicIpAddress"
     value     = "true"
-    resource  = ""
-  }
-  setting {
-    namespace = "aws:elb:healthcheck"
-    name      = "Interval"
-    value     = 60
-    resource  = ""
-  }
-  setting {
-    namespace = "aws:elb:healthcheck"
-    name      = "Timeout"
-    value     = 20
-    resource  = ""
   }
   setting {
     namespace = "aws:autoscaling:asg"
     name      = "MinSize"
     value     = 1
-    resource  = ""
   }
   setting {
     namespace = "aws:autoscaling:asg"
     name      = "MaxSize"
     value     = 1
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:environment"
+    name      = "EnvironmentType"
+    value     = "LoadBalanced"
+  }
+  setting {
+    namespace = "aws:elasticbeanstalk:environment"
+    name      = "LoadBalancerType"
+    value     = "network"
+  }
+  setting {
+    namespace = "aws:elbv2:listener:default"
+    name      = "ListenerEnabled"
+    value     = "true"
+  }
+  setting {
+    namespace = "aws:ec2:vpc"
+    name      = "ELBSubnets"
+    value     = join(",", module.vpc.private_subnets)
+  }
+  setting {
+    namespace = "aws:elasticbeanstalk:environment:process:default"
+    name      = "Protocol"
+    value     = "TCP"
+  }
+  setting {
+    namespace = "aws:elb:healthcheck"
+    name      = "Interval"
+    value     = 10
+  }
+  setting {
+    namespace = "aws:elb:healthcheck"
+    name      = "Timeout"
+    value     = 20
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "SERVER_PORT"
+    value     = "5000"
     resource  = ""
   }
   setting {
@@ -194,6 +156,18 @@ resource "aws_elastic_beanstalk_environment" "backend_beanstalk" {
     namespace = "aws:elasticbeanstalk:application:environment"
     name      = "DB_URL"
     value     = module.rds.db_instance_address
+    resource  = ""
+  }
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "MTLS_CERT"
+    value     = jsondecode(data.aws_secretsmanager_secret_version.mtls_details.secret_string)["cert"]
+    resource  = ""
+  }
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "MTLS_KEY"
+    value     = jsondecode(data.aws_secretsmanager_secret_version.mtls_details.secret_string)["key"]
     resource  = ""
   }
 }
