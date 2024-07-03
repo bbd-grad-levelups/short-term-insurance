@@ -9,7 +9,7 @@ public interface ISimulationService
   bool IsRunning { get; set; }
   string CurrentDate { get; }
 
-  void StartSim();
+  void StartSim(DateTime startTime);
   TimeEvents UpdateDate();
   void Reset();
   int DaysSinceDate(string date);
@@ -67,11 +67,11 @@ public class SimulationService() : ISimulationService
     IsRunning = false;
   }
 
-  public void StartSim()
+  public void StartSim(DateTime startTime)
   {
     IsRunning = true;
     CurrentDate = "01|01|01";
-    simStart = DateTime.Now;
+    simStart = startTime;
   }
 
   public int DaysSinceDate(string date)

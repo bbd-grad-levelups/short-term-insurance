@@ -70,7 +70,7 @@ public class ElectronicsController(PersonaContext context, IBankingService banki
   {
     if (request.AmountNew > 0)
     {
-      var currentPersona = await _context.Personas.FirstAsync(p => p.PersonaId == request.PersonaId);
+      var currentPersona = await _context.Personas.Where(p => p.PersonaId == request.PersonaId).FirstOrDefaultAsync();
       if (currentPersona != null)
       {
         currentPersona.Electronics += request.AmountNew;

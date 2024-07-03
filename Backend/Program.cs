@@ -20,7 +20,7 @@ var connectionStringBuilder = new NpgsqlConnectionStringBuilder()
   Password = builder.Configuration["DB_PASSWORD"] ?? throw new Exception("No DB_PASSWORD found"),
   Username = builder.Configuration["DB_USERNAME"] ?? throw new Exception("No DB_USERNAME found"),
   Port = NpgsqlConnection.DefaultPort,
-  Database = builder.Configuration["DB_DATABASE"] ?? "sti",
+  Database = "sti",
   Pooling = true,
   MaxPoolSize = 20
 };

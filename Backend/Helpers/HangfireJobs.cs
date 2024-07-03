@@ -13,6 +13,7 @@ public class HangfireJobs(IStockExchangeService stock, IBankingService banking, 
   public async Task TimeStep()
   {
     _logger.LogInformation("Updating time.");
+    Console.WriteLine("Updating time: hangfire job");
 
     if (_simulation.IsRunning)
     {
