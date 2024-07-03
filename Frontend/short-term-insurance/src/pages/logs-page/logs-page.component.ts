@@ -62,7 +62,7 @@ export class LogsPageComponent {
 
   dataSource: MatTableDataSource<Logs> = new MatTableDataSource<Logs>();
 
-  displayedColumns: string[] = ['date', 'message'];
+  displayedColumns: string[] = ['timeStamp', 'message'];
   error: boolean = false;
   loading: boolean = true;
   isLastPage: boolean = false;
