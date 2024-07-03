@@ -1,0 +1,217 @@
+{
+    "personas": [
+        {
+            "id": 1,
+            "personaId": 1,
+            "electronics": 2,
+            "lastPaymentDate": "22|01|01",
+            "debitOrderId": 987654
+        },
+        {
+            "id": 2,
+            "personaId": 2,
+            "electronics": 4,
+            "lastPaymentDate": "22|01|02",
+            "debitOrderId": 456789
+        },
+        {
+            "id": 3,
+            "personaId": 3,
+            "electronics": 3,
+            "lastPaymentDate": "22|01|03",
+            "debitOrderId": 123987
+        },
+        {
+            "id": 4,
+            "personaId": 4,
+            "electronics": 5,
+            "lastPaymentDate": "22|01|04",
+            "debitOrderId": 789456
+        },
+        {
+            "id": 5,
+            "personaId": 5,
+            "electronics": 1,
+            "lastPaymentDate": "22|01|05",
+            "debitOrderId": 654321
+        },
+        {
+            "id": 6,
+            "personaId": 6,
+            "electronics": 6,
+            "lastPaymentDate": "22|01|06",
+            "debitOrderId": 321789
+        },
+        {
+            "id": 7,
+            "personaId": 7,
+            "electronics": 2,
+            "lastPaymentDate": "22|01|07",
+            "debitOrderId": 951753
+        },
+        {
+            "id": 8,
+            "personaId": 8,
+            "electronics": 3,
+            "lastPaymentDate": "22|01|08",
+            "debitOrderId": 357159
+        },
+        {
+            "id": 9,
+            "personaId": 9,
+            "electronics": 4,
+            "lastPaymentDate": "22|01|09",
+            "debitOrderId": 864209
+        },
+        {
+            "id": 10,
+            "personaId": 10,
+            "electronics": 2,
+            "lastPaymentDate": "22|01|10",
+            "debitOrderId": 123456
+        },
+        {
+            "id": 11,
+            "personaId": 11,
+            "electronics": 3,
+            "lastPaymentDate": "22|01|11",
+            "debitOrderId": 654321
+        },
+        {
+            "id": 12,
+            "personaId": 12,
+            "electronics": 5,
+            "lastPaymentDate": "22|01|12",
+            "debitOrderId": 987654
+        },
+        {
+            "id": 13,
+            "personaId": 13,
+            "electronics": 1,
+            "lastPaymentDate": "22|01|13",
+            "debitOrderId": 456789
+        },
+        {
+            "id": 14,
+            "personaId": 14,
+            "electronics": 4,
+            "lastPaymentDate": "22|01|14",
+            "debitOrderId": 123987
+        },
+        {
+            "id": 15,
+            "personaId": 15,
+            "electronics": 2,
+            "lastPaymentDate": "22|01|15",
+            "debitOrderId": 789456
+        },
+        {
+            "id": 16,
+            "personaId": 16,
+            "electronics": 6,
+            "lastPaymentDate": "22|01|16",
+            "debitOrderId": 654321
+        },
+        {
+            "id": 17,
+            "personaId": 17,
+            "electronics": 3,
+            "lastPaymentDate": "22|01|17",
+            "debitOrderId": 321789
+        },
+        {
+            "id": 18,
+            "personaId": 18,
+            "electronics": 2,
+            "lastPaymentDate": "22|01|18",
+            "debitOrderId": 951753
+        },
+        {
+            "id": 19,
+            "personaId": 19,
+            "electronics": 4,
+            "lastPaymentDate": "22|01|19",
+            "debitOrderId": 357159
+        },
+        {
+            "id": 20,
+            "personaId": 20,
+            "electronics": 5,
+            "lastPaymentDate": "22|01|20",
+            "debitOrderId": 864209
+        },
+        {
+            "id": 21,
+            "personaId": 21,
+            "electronics": 1,
+            "lastPaymentDate": "22|01|21",
+            "debitOrderId": 123456
+        },
+        {
+            "id": 22,
+            "personaId": 22,
+            "electronics": 3,
+            "lastPaymentDate": "22|01|22",
+            "debitOrderId": 654321
+        },
+        {
+            "id": 23,
+            "personaId": 23,
+            "electronics": 2,
+            "lastPaymentDate": "22|01|23",
+            "debitOrderId": 987654
+        },
+        {
+            "id": 24,
+            "personaId": 24,
+            "electronics": 4,
+            "lastPaymentDate": "22|01|24",
+            "debitOrderId": 456789
+        },
+        {
+            "id": 25,
+            "personaId": 25,
+            "electronics": 5,
+            "lastPaymentDate": "22|01|25",
+            "debitOrderId": 123987
+        },
+        {
+            "id": 26,
+            "personaId": 26,
+            "electronics": 1,
+            "lastPaymentDate": "22|01|26",
+            "debitOrderId": 789456
+        },
+        {
+            "id": 27,
+            "personaId": 27,
+            "electronics": 6,
+            "lastPaymentDate": "22|01|27",
+            "debitOrderId": 654321
+        },
+        {
+            "id": 28,
+            "personaId": 28,
+            "electronics": 2,
+            "lastPaymentDate": "22|01|28",
+            "debitOrderId": 321789
+        },
+        {
+            "id": 29,
+            "personaId": 29,
+            "electronics": 3,
+            "lastPaymentDate": "22|01|29",
+            "debitOrderId": 951753
+        },
+        {
+            "id": 30,
+            "personaId": 30,
+            "electronics": 4,
+            "lastPaymentDate": "22|01|30",
+            "debitOrderId": 357159
+        }
+    ],
+    "page": 1,
+    "pageSize": 50,
+    "availablePages": 1
+}

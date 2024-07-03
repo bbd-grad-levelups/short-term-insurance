@@ -14,3 +14,30 @@ body {
   --secondary: #1e1f1f;
   --tertiary: #ffffff;
 }
+
+.filter-button {
+  margin-left: 0.5rem;
+  background-color: var(--secondary) !important;
+  border-radius: 0.15rem !important;
+}
+
+.error-container {
+  text-align: center;
+
+  background-color: var(--tertiary);
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.error-container h1 {
+  color: red;
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
