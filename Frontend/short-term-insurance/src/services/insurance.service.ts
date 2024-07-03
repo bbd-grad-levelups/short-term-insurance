@@ -36,7 +36,7 @@ export class InsuranceService {
     )
   }
 
-  getLogs(beginDate: String, endDate: String, page: number): Observable<Pagination<Logs>> {
+  getLogs(beginDate: string, endDate: string, page: number): Observable<Pagination<Logs>> {
     return this.httpClient.get<any>(
       `${this.baseUrl}/api/log?beginDate=${beginDate}&endDate=${endDate}&page=${page}`
     ).pipe(

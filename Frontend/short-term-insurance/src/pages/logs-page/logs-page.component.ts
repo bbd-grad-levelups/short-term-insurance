@@ -9,15 +9,14 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Logs } from '../../models/logs.model';
 import { MatButtonModule } from '@angular/material/button';
 import { InsuranceService } from '../../services/insurance.service';
-import {provideNativeDateAdapter} from '@angular/material/core';
-import {MatDatepickerModule} from '@angular/material/datepicker';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material/input';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
-
-import {JsonPipe} from '@angular/common';
-import {FormControl, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { JsonPipe } from '@angular/common';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { L } from '@angular/cdk/keycodes';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-logs-page',
@@ -28,7 +27,7 @@ import { L } from '@angular/cdk/keycodes';
     MatIcon,
     MatProgressSpinnerModule,
     MatTableModule,
-    MatFormFieldModule, 
+    MatFormFieldModule,
     MatDatepickerModule,
     MatFormFieldModule, 
     MatDatepickerModule, 
@@ -66,105 +65,44 @@ export class LogsPageComponent {
   error: boolean = false;
   loading: boolean = true;
   isLastPage: boolean = false;
+  isFirstPage: boolean = true;
   page: number = 1;
+  availablePages: number = 1;
   endDate: Date | null = null;
   beginDate: Date | null = null;
 
-  tempDate: Date | null = null;
-  tempDateEnd: Date | null = null
+  startDateFormControl = new FormControl('0001/01/01', [Validators.required]);
+  endDateFormControl = new FormControl('0001/02/05', [Validators.required]);
 
   constructor(
+    private cdr: ChangeDetectorRef,
     private insuranceService: InsuranceService,
     private snackBar: MatSnackBar
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.getLogsData();
   }
-   
-  public buildDate(y: number, m: number , d: number) {
-    // Ensure max dates are correct
-    if (y < 1 || y > 9999) {
-      throw new Error('Year must be between 0001 and 9999');
-    }
-    if (m < 1 || m > 12) {
-      throw new Error('Month must be between 1 and 12');
-    }
-    if (d < 1 || d > 31) {
-      throw new Error('Day must be between 1 and 31');
-    }
 
-    const formattedYear = String(y).padStart(4, '0');
-    const formattedMonth = String(m).padStart(2, '0');
-    const formattedDay = String(d).padStart(2, '0');
+  submitFilter() {
+    console.log("filter")
+    if (this.startDateFormControl.invalid || this.endDateFormControl.invalid) return;
 
-    // Create new date string
-    const dateString = `${formattedYear}-${formattedMonth}-${formattedDay}T00:00:00.000Z`;
-
-    // Create date object
-    return new Date(dateString)
+    this.getLogsData()
   }
 
-
-  public filterButtonClicked(){
-
-    console.log('new start date: ' + (this.date.value.startDate));
-    console.log('new end date: ' + this.date.value.endDate);
-
-    let year = String(this.date.value.startDate).substring(0, 4);
-    let month = String(this.date.value.startDate).substring(5, 7);
-    let day = String(this.date.value.startDate).substring(8, 10);
-
-    this.beginDate = this.buildDate(parseInt(year), parseInt(month), parseInt(day));
-    console.log('Formatted start date: ' + this.beginDate);
-    
-    year = String(this.date.value.endDate).substring(0, 4);
-    month = String(this.date.value.endDate).substring(5, 7);
-    day = String(this.date.value.endDate).substring(8, 10);
-
-    this.endDate = this.buildDate(parseInt(year), parseInt(month), parseInt(day));
-    console.log('Formatted end date: ' + this.endDate);
-
-    this.getLogsData();
-   }
-
-
-  getLogsData(nextPage: boolean = false) {
-    console.log('getLogsData startDate: ' + this.beginDate + ' ' + this.endDate);
-   if (this.date.value.startDate){
-      this.beginDate = this.date.value.startDate;
-   }
-   else {
-     this.beginDate = new Date(0);
-   }
-   if (this.date.value.endDate){
-      this.endDate = this.date.value.endDate;
-   }
-   else {
-     this.endDate = new Date(0);
-   }
-    console.log('getLogsData startDate: ' + this.beginDate + ' ' + this.endDate);
-
-    let strStartDate = new Date(this.beginDate).toISOString().split('T')[0].replace(/-/g, '/');
-    console.log('strDate ' + (strStartDate));
-    let strEndDate = new Date(this.endDate).toISOString().split('T')[0].replace(/-/g, '/');
-    console.log('strDate ' + (strEndDate));
-
+  getLogsData() {
     this.error = false;
     this.loading = true;
-    this.insuranceService.getLogs(strStartDate, strEndDate, this.page)
+    this.insuranceService.getLogs(this.startDateFormControl.value!, this.endDateFormControl.value!, this.page)
       .subscribe({
         next: response => {
-          console.log(response);
-          // this.isLastPage = response.page === response.availablePages;
-          // if (nextPage && this.isLastPage) {
-          //   this.page--;
-          //   this.snackBar.open('On Last Page.', 'Ok', { "duration": 4000 });
-          //   return;
-          // }
-
+          this.isFirstPage = response.page === 1;
+          this.isLastPage = response.page === response.availablePages;
+          this.availablePages = response.availablePages;
           this.dataSource = new MatTableDataSource<Logs>(response.data);
           this.loading = false;
+          this.cdr.detectChanges();
         },
         error: () => {
           this.error = true;
@@ -187,7 +125,7 @@ export class LogsPageComponent {
 
   nextPage() {
     this.page++;
-    this.getLogsData(true)
+    this.getLogsData()
   }
 
 }
