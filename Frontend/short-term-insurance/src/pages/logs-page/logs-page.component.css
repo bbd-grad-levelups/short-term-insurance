@@ -14,3 +14,28 @@
     gap: 1rem;
 }
 
+.date-picker{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.date-picker-button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* margin-top: 0.003rem; */
+}
+
+.date-picker-component{
+    box-shadow: 1px 1px;;
+}
+
+.box{
+    /* width: 300px; */
+    border: 0.125rem solid gray;
+    background-color: rgba(181, 181, 181, 0.15);
+    /* padding: 5%; */
+    /* margin: 1.25rem; */
+    border-radius: 5px;
+}

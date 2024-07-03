@@ -10,11 +10,12 @@ body {
 }
 
 :root {
-  --primary: #509ad2;
+  --primary: #d25073;
   --secondary: #1e1f1f;
   --tertiary: #ffffff;
 }
 
 .fliter-button{
   margin-left: 0.5rem;
+  background-color: #d25073 !important;
 }

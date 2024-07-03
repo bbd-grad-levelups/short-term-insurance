@@ -1,4 +1,4 @@
 export interface Logs {
-  date: string;
+  timeStamp: string;
   message: string;
 }
