@@ -70,8 +70,9 @@ public class SimulationService() : ISimulationService
   public void StartSim(DateTime startTime)
   {
     IsRunning = true;
-    CurrentDate = "01|01|01";
     simStart = startTime;
+    TimeEvents events = UpdateDate();
+    CurrentDate = events.NewDate;
   }
 
   public int DaysSinceDate(string date)

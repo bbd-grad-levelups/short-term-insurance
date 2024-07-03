@@ -10,10 +10,12 @@ namespace Backend.Controllers;
 
 [Route("api/persona")]
 [ApiController]
-public class PersonaController(PersonaContext context, IBankingService banking, ILogger<PersonaController> logger) : ControllerBase
+public class PersonaController(PersonaContext context, LoggerContext logCon, ISimulationService sim, IBankingService banking, ILogger<PersonaController> logger) : ControllerBase
 {
   private readonly PersonaContext _context = context;
+  private readonly LoggerContext _logCon = logCon;
   private readonly IBankingService _banking = banking;
+  private readonly ISimulationService _simulation = sim;
   private readonly ILogger<PersonaController> _logger = logger;
 
   /// <summary>
@@ -25,6 +27,7 @@ public class PersonaController(PersonaContext context, IBankingService banking, 
   public async Task<ActionResult> ReceivePersonaUpdate([FromBody] PersonaUpdate personaUpdate)
   {
     _logger.LogInformation("Received new persona information");
+    var log = new Log(_simulation.CurrentDate, "Received new persona information");
 
     List<long> deadPeopleIds = personaUpdate.Deaths.Select(death => death.Deceased).ToList();
     var deadPeople = await _context.Personas.Where((Persona person) => deadPeopleIds.Contains(person.PersonaId)).ToListAsync();

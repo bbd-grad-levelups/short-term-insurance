@@ -1,7 +1,7 @@
 databaseChangeLog:
   - include:
       file: ./Database/tableCreates.sql
-  - include:
-      file: ./Database/MockData/personas.sql
-  - include:
-      file: ./Database/MockData/logs.sql
+  # - include:
+  #     file: ./Database/MockData/personas.sql
+  # - include:
+  #     file: ./Database/MockData/logs.sql
