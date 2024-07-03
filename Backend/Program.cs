@@ -36,6 +36,16 @@ builder.Services.AddScoped<IBankingService, BankingService>();
 builder.Services.AddScoped<IStockExchangeService, StockExchangeService>();
 builder.Services.AddScoped<ITaxService, TaxService>();
 
+builder.Services.AddCors(options =>
+{
+  options.AddPolicy("CORS", builder =>
+  {
+    builder.WithOrigins(["*"])
+          .WithHeaders(["Content-Type", "Authorization"])
+          .WithMethods([HttpMethods.Get, HttpMethods.Post, HttpMethods.Delete, HttpMethods.Patch, HttpMethods.Put, HttpMethods.Options]).Build();
+  });
+});
+
 builder.Services.AddHangfire(config =>
 {
   config.UsePostgreSqlStorage(options =>
@@ -67,6 +77,8 @@ using (var scope = serviceProvider.CreateScope())
   RecurringJob.AddOrUpdate("TimeStep", () => hangfireJobs.TimeStep(), "*/5 * * * *");
   RecurringJob.AddOrUpdate("TestEndpoints", () => hangfireJobs.TestEndpoints(), "0 1 * * *");
 }
+
+app.UseCors("CORS");
 
 app.MapGet("/", () => "Health Good - No need to worry Karl :)");
 app.MapControllers();
