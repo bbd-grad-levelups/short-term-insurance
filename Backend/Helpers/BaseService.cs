@@ -19,18 +19,10 @@ public class BaseService(ILogger<BaseService> logger)
 
   internal static HttpClient SetupClient()
   {
-    var certString = Environment.GetEnvironmentVariable("MTLS_CERT") ?? throw new Exception("Could not load MTLS_CERT");
-    var passString = Environment.GetEnvironmentVariable("MTLS_KEY")?.Trim() ?? throw new Exception("Could not load MTLS_KEY");
-
-    var cert = Convert.FromBase64String(certString);
-    var clientCert = new X509Certificate2(cert, passString);
-
-    var handler = new HttpClientHandler();
-    handler.ClientCertificates.Add(clientCert);
-
-    var client = new HttpClient(handler);
+    var client = new HttpClient();
     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-    client.DefaultRequestHeaders.Add("origin-service", "ShortTermInsurance");
+    client.DefaultRequestHeaders.Add("X-Origin", "short_term_insurance");
+
     return client;
   }
 

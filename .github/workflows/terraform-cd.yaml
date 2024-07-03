@@ -36,8 +36,8 @@ jobs:
         run: |
           make init
 
-      - name: Terraform Apply
-        id: apply
-        working-directory: ${{ inputs.terraform-directory }}
-        run: |
-          make apply
+      # - name: Terraform Apply
+      #   id: apply
+      #   working-directory: ${{ inputs.terraform-directory }}
+      #   run: |
+      #     make apply

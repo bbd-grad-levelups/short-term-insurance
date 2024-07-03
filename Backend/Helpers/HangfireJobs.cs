@@ -6,11 +6,15 @@ using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 
 using Newtonsoft.Json;
+using Backend.Contexts;
+using Backend.Controllers;
+using Backend.Models;
 
 namespace Backend.Jobs;
 
-public class HangfireJobs(IStockExchangeService stock, IBankingService banking, ISimulationService sim, ITaxService tax, ILogger<HangfireJobs> logger) : ControllerBase
+public class HangfireJobs(LoggerContext loggerCon, IStockExchangeService stock, IBankingService banking, ISimulationService sim, ITaxService tax, ILogger<HangfireJobs> logger) : ControllerBase
 {
+  private readonly LoggerContext _loggerContext = loggerCon;
   private readonly IStockExchangeService _stock = stock;
   private readonly ILogger<HangfireJobs> _logger = logger;
   private readonly ITaxService _taxService = tax;
@@ -20,24 +24,36 @@ public class HangfireJobs(IStockExchangeService stock, IBankingService banking, 
   public async Task TimeStep()
   {
     _logger.LogInformation("Updating time.");
-    Console.WriteLine("Updating time: hangfire job");
 
     if (_simulation.IsRunning)
     {
+      var logs = new List<Log>();
+
       var events = _simulation.UpdateDate();
       _logger.LogInformation("Current time: {newDate}", events.NewDate);
       if (events.NewMonth)
       {
-        int profit = _taxService.Profit;
-        await _stock.RequestDividends(profit);
+        _logger.LogInformation("New month!");
+
+        long dividends = (long)(_taxService.Profit * 0.79);
+        long tax = (long)(_taxService.Profit * 0.21);
+
+        await _stock.RequestDividends(dividends);
+        await _banking.MakeCommercialPayment("central-revenue-service", tax);
         _taxService.Profit = 0;
-        _logger.LogInformation("Requested Dividends payout for monthly profit: {profit}", profit);
+        _logger.LogInformation("Requested Dividends payout for monthly profit: {dividends}", dividends);
+        _logger.LogInformation("Paid tax for month {NewDate}: {tax}", events.NewDate, tax);
+        logs.Add(new Log(events.NewDate, $"Requested Dividends payout for monthly profit: {dividends}"));
+        logs.Add(new Log(events.NewDate, $"Paid tax for month {events.NewDate}: {tax}"));
+      }
+      else if (events.NewYear)
+      {
+        _logger.LogInformation("Happy new year!");
+        logs.Add(new Log(events.NewDate, "Happy new year!"));
       }
 
-      if (events.NewYear)
-      {
-        // pay tax
-      }
+      _loggerContext.Logs.AddRange(logs);
+      await _loggerContext.SaveChangesAsync();
     }
   }
 

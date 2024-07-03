@@ -10,10 +10,11 @@ namespace Backend.Controllers;
 
 [Route("api/electronics")]
 [ApiController]
-public class ElectronicsController(PersonaContext context, IBankingService banking, ISimulationService simulation, ILogger<ElectronicsController> logger) : ControllerBase
+public class ElectronicsController(PersonaContext context, LoggerContext logCon, IBankingService banking, ISimulationService simulation, ILogger<ElectronicsController> logger) : ControllerBase
 {
   private readonly PersonaContext _context = context;
   private readonly IBankingService _banking = banking;
+  private readonly LoggerContext loggerContext = logCon;
   private readonly ISimulationService _simulation = simulation;
   private readonly ILogger<ElectronicsController> _logger = logger;
 

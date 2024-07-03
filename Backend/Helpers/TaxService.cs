@@ -7,13 +7,12 @@ public interface ITaxService
 {
   Task Register();
   Task PayTax();
-  public int Profit {  get; set; }
+  public long Profit { get; set; }
 }
 
 public class TaxService(ILogger<TaxService> logger) : BaseService(logger), ITaxService
 {
   private string taxId = "";
-  public int profit;
 
   public async Task Register()
   {
@@ -26,8 +25,6 @@ public class TaxService(ILogger<TaxService> logger) : BaseService(logger), ITaxS
 
   public async Task PayTax()
   {
-
-    profit = 0;
     var body = new RequestTaxBody(taxId);
     var apiUrl = $"{_taxEndpoint}/api/taxpayer/getTaxStatement/{taxId}";
     var response = await PerformCall("tax-service", apiUrl, body, HttpMethod.Post);
@@ -35,5 +32,5 @@ public class TaxService(ILogger<TaxService> logger) : BaseService(logger), ITaxS
     // and then pay their bank account?
   }
 
-  public int Profit { get; set; }
+  public long Profit { get; set; }
 }
