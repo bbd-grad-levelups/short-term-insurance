@@ -44,8 +44,15 @@ public class BankingService(ILogger<BankingService> logger) : BaseService(logger
   {
     var body = new DebitOrderBody(amount, personaId);
     string apiUrl = $"{_retailEndpoint}/api/debitorders";
-    await PerformCall("banking-service", apiUrl, body, HttpMethod.Post);
-    return 1; // TODO: ACTUALLY DO LOL
+    var response = await PerformCall("banking-service", apiUrl, body, HttpMethod.Post);
+    if (response.IsSuccessStatusCode)
+    {
+      return 1;
+    }
+    else
+    {
+      return 1;
+    }
   }
 
   public async Task MakeCommercialPayment(string account, long amount)

@@ -1,4 +1,6 @@
 using Newtonsoft.Json;
+
+using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -34,22 +36,44 @@ public class BaseService(ILogger<BaseService> logger)
 
   internal async Task<HttpResponseMessage> PerformCall(string service, string url, object body, HttpMethod method)
   {
-    var jsonBody = JsonConvert.SerializeObject(body);
-    var content = new StringContent(jsonBody, System.Text.Encoding.UTF8, "application/json");
-    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
-    var request = new HttpRequestMessage(method, url)
+    try
     {
-      Content = content
-    };
 
-    _logger.LogInformation("Creating {method} call to {service}! {url}", method.ToString(), service, url);
+      var jsonBody = JsonConvert.SerializeObject(body);
+      var content = new StringContent(jsonBody, System.Text.Encoding.UTF8, "application/json");
+      content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-    var response = await _httpClient.SendAsync(request);
-    var responseContent = await response.Content.ReadAsStringAsync();
-    _logger.LogInformation("Call Result: {StatusCode}, {responseContent}", response.StatusCode, responseContent);
+      var request = new HttpRequestMessage(method, url)
+      {
+        Content = content
+      };
 
-    return response;
+      _logger.LogInformation("Creating {method} call to {service}! {url}", method.ToString(), service, url);
+
+      var response = await _httpClient.SendAsync(request);
+      var responseContent = await response.Content.ReadAsStringAsync();
+      _logger.LogInformation("Call Result: {StatusCode}, {responseContent}", response.StatusCode, responseContent);
+
+      return response;
+    }
+    catch (HttpRequestException ex)
+    {
+      // Log network-related errors
+      _logger.LogError(ex, "HTTP request failed: {service}, {url}", service, url);
+      return new HttpResponseMessage(HttpStatusCode.InternalServerError);
+    }
+    catch (TaskCanceledException ex)
+    {
+      // Log timeout errors
+      _logger.LogError(ex, "HTTP request timed out: {service}, {url}", service, url);
+      return new HttpResponseMessage(HttpStatusCode.InternalServerError);
+    }
+    catch (Exception ex)
+    {
+      // Handle any other unexpected exceptions
+      _logger.LogError(ex, "Unexpected error occurred during HTTP request: {service}, {url}", service, url);
+      return new HttpResponseMessage(HttpStatusCode.InternalServerError);
+    }
   }
 
   internal static string RemoveBeginEndCertificate(string cert)
