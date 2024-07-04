@@ -1,5 +1,4 @@
 using Backend.Contexts;
-using Backend.Helpers;
 using Backend.Models;
 using Backend.Services;
 
@@ -10,11 +9,12 @@ namespace Backend.Controllers;
 
 [Route("api/electronics")]
 [ApiController]
-public class ElectronicsController(PersonaContext context, LoggerContext logCon, IBankingService banking, ISimulationService simulation, ILogger<ElectronicsController> logger) : ControllerBase
+public class ElectronicsController(PersonaContext context, LoggerContext logCon, IBankingService banking, ISimulationService simulation, IPriceService price, ILogger<ElectronicsController> logger) : ControllerBase
 {
   private readonly PersonaContext _context = context;
-  private readonly IBankingService _banking = banking;
   private readonly LoggerContext loggerContext = logCon;
+  private readonly IBankingService _banking = banking;
+  private readonly IPriceService _priceService = price;
   private readonly ISimulationService _simulation = simulation;
   private readonly ILogger<ElectronicsController> _logger = logger;
 
@@ -37,13 +37,13 @@ public class ElectronicsController(PersonaContext context, LoggerContext logCon,
         bool currentlyInsured = _simulation.DaysSinceDate(persona.LastPaymentDate) < 32;
         if (currentlyInsured)
         {
-          long claimPayout = Insurance.CalculatePayout(electronicsClaimed);
+          long claimPayout = _priceService.CalculatePayout(electronicsClaimed);
           await _banking.MakeCommercialPayment(persona.PersonaId.ToString(), "Electronics insurance payout.", claimPayout);
         }
 
         persona.Electronics -= electronicsClaimed;
 
-        var newPremium = Insurance.CalculateInsurance(persona.Electronics);
+        var newPremium = _priceService.CalculateInsurance(persona.Electronics);
         await _banking.CancelDebitOrder(persona.DebitOrderId);
         int newDebitId = await _banking.CreateRetailDebitOrder(persona.PersonaId, newPremium);
         persona.DebitOrderId = newDebitId;
@@ -80,6 +80,7 @@ public class ElectronicsController(PersonaContext context, LoggerContext logCon,
       if (currentPersona != null)
       {
         currentPersona.Electronics += request.AmountNew;
+        await _banking.CancelDebitOrder(currentPersona.DebitOrderId);
       }
       else
       {
@@ -91,7 +92,7 @@ public class ElectronicsController(PersonaContext context, LoggerContext logCon,
         _context.Add(currentPersona);
       }
 
-      var newPremium = Insurance.CalculateInsurance(currentPersona.Electronics);
+      var newPremium = _priceService.CalculateInsurance(currentPersona.Electronics);
       int newDebitId = await _banking.CreateRetailDebitOrder(currentPersona.PersonaId, newPremium);
       currentPersona.DebitOrderId = newDebitId;
       await _context.SaveChangesAsync();
@@ -101,21 +102,6 @@ public class ElectronicsController(PersonaContext context, LoggerContext logCon,
       await loggerContext.SaveChangesAsync();
     }
 
-    return NoContent();
-  }
-
-  /// <summary>
-  /// Endpoint called when price of insurance changes.
-  /// </summary>
-  /// <param name="request"></param>
-  /// <returns></returns>
-  [HttpPatch("price")]
-  public async Task<ActionResult> UpdatePrice([FromBody] ModifyInsurancePrice request)
-  {
-    Insurance.CurrentPrice = (long)request.NewPrice;
-    var myLog = new Log(_simulation.CurrentDate, $"Received new price for insurance: {Insurance.CurrentPrice}");
-    loggerContext.Add(myLog);
-    await loggerContext.SaveChangesAsync();
     return NoContent();
   }
 }

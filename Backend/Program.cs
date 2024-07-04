@@ -35,6 +35,7 @@ builder.Services.AddSingleton<ISimulationService, SimulationService>();
 builder.Services.AddScoped<IBankingService, BankingService>();
 builder.Services.AddScoped<IStockExchangeService, StockExchangeService>();
 builder.Services.AddSingleton<ITaxService, TaxService>();
+builder.Services.AddSingleton<IPriceService, PriceService>();
 
 builder.Services.AddCors(options =>
 {

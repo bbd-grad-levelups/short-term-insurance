@@ -1,6 +1,5 @@
 using Backend.Contexts;
 using Backend.Models;
-using Backend.Helpers;
 using Backend.Services;
 
 using Microsoft.AspNetCore.Mvc;
@@ -10,11 +9,12 @@ namespace Backend.Controllers;
 
 [Route("api/persona")]
 [ApiController]
-public class PersonaController(PersonaContext context, LoggerContext logCon, ISimulationService sim, IBankingService banking, ILogger<PersonaController> logger) : ControllerBase
+public class PersonaController(PersonaContext context, LoggerContext logCon, ISimulationService sim, IPriceService price, IBankingService banking, ILogger<PersonaController> logger) : ControllerBase
 {
   private readonly PersonaContext _context = context;
   private readonly LoggerContext _logCon = logCon;
   private readonly IBankingService _banking = banking;
+  private readonly IPriceService _priceService = price;
   private readonly ISimulationService _simulation = sim;
   private readonly ILogger<PersonaController> _logger = logger;
 
@@ -26,37 +26,56 @@ public class PersonaController(PersonaContext context, LoggerContext logCon, ISi
   [HttpPost("")]
   public async Task<ActionResult> ReceivePersonaUpdate([FromBody] PersonaUpdate personaUpdate)
   {
-    _logger.LogInformation("Received new persona information");
-    var log = new Log(_simulation.CurrentDate, "Received new persona information");
-
-    List<long> deadPeopleIds = personaUpdate.Deaths.Select(death => death.Deceased).ToList();
-    var deadPeople = await _context.Personas.Where((Persona person) => deadPeopleIds.Contains(person.PersonaId)).ToListAsync();
-
-    List<Persona> newPeople = personaUpdate.Deaths.Select(currentDeath =>
+    List<Persona> deadPeople = [];
+    List<Persona> newPeople = [];
+    List<Persona> allPeople = [];
+    foreach (Death death in personaUpdate.Deaths)
     {
-      var deadPerson = deadPeople.FirstOrDefault(persona => persona.PersonaId == currentDeath.Deceased);
-      return new Persona()
+      var deadPerson = await _context.Personas.Where(persona => persona.PersonaId == death.Deceased).FirstOrDefaultAsync();
+      var newPerson = await _context.Personas.Where(persona => persona.PersonaId == death.NextOfKin).FirstOrDefaultAsync();
+
+      if (deadPerson != null)
       {
-        Electronics = deadPerson?.Electronics ?? 0,
-        PersonaId = currentDeath.NextOfKin,
-      };
-    }).ToList();
+        deadPeople.Add(deadPerson);
+        if (deadPerson.Electronics > 0)
+        {
+          if (newPerson != null)
+          {
+            newPerson.Electronics += deadPerson.Electronics;
+          }
+          else
+          {
+            newPerson = new Persona()
+            {
+              Electronics = deadPerson.Electronics,
+              PersonaId = death.NextOfKin,
+            };
+            newPeople.Add(newPerson);
+          }
+          allPeople.Add(newPerson);
+        }
+      }
+    }
+
+    foreach (Persona persona in allPeople)
+    {
+      var newPremium = _priceService.CalculateInsurance(persona.Electronics);
+      if (persona.DebitOrderId != default)
+      {
+        await _banking.CancelDebitOrder(persona.DebitOrderId);
+      }
+      var debitId = await _banking.CreateRetailDebitOrder(persona.PersonaId, newPremium);
+      persona.DebitOrderId = debitId;
+    }
 
     _context.Personas.RemoveRange(deadPeople);
-    
-    // Create debit orders for each of these new personas
-    var additionsTasks = newPeople.Select(async newPerson => 
-    {
-      var newPremium = Insurance.CalculateInsurance(newPerson.Electronics);
-      var debitId = await _banking.CreateRetailDebitOrder(newPerson.PersonaId, newPremium);
-      newPerson.DebitOrderId = debitId;
-      return newPerson;
-    }).ToList();
-
-    var additions = Task.WhenAll(additionsTasks);
-
-    _context.AddRange(newPeople);
+    _context.Personas.AddRange(newPeople);
     await _context.SaveChangesAsync();
+
+    var log = new Log(_simulation.CurrentDate, "Received new persona information");
+    _logCon.Add(log);
+    await _logCon.SaveChangesAsync();
+    
     return NoContent();
   }
 }

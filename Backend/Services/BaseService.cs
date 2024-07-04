@@ -15,6 +15,7 @@ public class BaseService(ILogger<BaseService> logger)
   internal readonly string _commercialEndpoint = "https://api.commercialbank.projects.bbdgrad.com";
   internal readonly string _exchangeEndpoint = "https://api.mese.projects.bbdgrad.com";
   internal readonly string _taxEndpoint = "https://api.mers.projects.bbdgrad.com";
+  internal readonly string _zeusEndpoint = "https://api.zeus.projects.bbdgrad.com";
 
   internal static HttpClient SetupClient()
   {
