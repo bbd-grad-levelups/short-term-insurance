@@ -57,7 +57,7 @@ export class LogsPageComponent {
   endDate: Date | null = null;
   beginDate: Date | null = null;
 
-  startDateFormControl = new FormControl('0001-01-01', 
+  startDateFormControl = new FormControl('0000-00-00', 
     [
       Validators.required, 
       Validators.pattern('[0-9]{4}-[0-9]{2}-[0-9]{2}')
