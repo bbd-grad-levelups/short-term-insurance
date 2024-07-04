@@ -1,21 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" GroupingSetting="Access" MembersFormat="FullSignature">
   <Class Name="Backend.Contexts.LoggerContext">
-    <Position X="10.75" Y="2" Width="1.5" />
+    <Position X="12" Y="5.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAA=</HashCode>
       <FileName>Contexts\LoggerContext.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Backend.Contexts.PersonaContext">
-    <Position X="1.25" Y="7" Width="1.5" />
+    <Position X="7.5" Y="7.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAICAAAAAAAAA=</HashCode>
       <FileName>Contexts\PersonaContext.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Backend.Controllers.BankingController">
-    <Position X="11.25" Y="5.75" Width="2.75" />
+    <Position X="10" Y="7.75" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAABQAAABAAIAAAAAAAAIAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Controllers\BankingController.cs</FileName>
@@ -29,21 +29,22 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="Backend.Controllers.ElectronicsController">
-    <Position X="4" Y="6.5" Width="1.5" />
+    <Position X="9" Y="5.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAQAAABAAAAAACAAAAIAAAAAIAQAABAAQAAAA=</HashCode>
+      <HashCode>AAAAAAAAQAAABAAAAAACAAAAIAAACAIAQAAAAAQAAAA=</HashCode>
       <FileName>Controllers\ElectronicsController.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Field Name="_context" />
-      <Field Name="_banking" />
       <Field Name="loggerContext" />
+      <Field Name="_banking" />
       <Field Name="_simulation" />
       <Field Name="_logger" />
+      <Field Name="_priceService" />
     </ShowAsAssociation>
   </Class>
   <Class Name="Backend.Controllers.FrontendController">
-    <Position X="6" Y="0.5" Width="1.5" />
+    <Position X="13.75" Y="8.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>QAAAAAAAAAAAAAAgAgAAAIAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Controllers\FrontendController.cs</FileName>
@@ -54,9 +55,9 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="Backend.Controllers.PersonaController">
-    <Position X="7" Y="5.75" Width="3.25" />
+    <Position X="9" Y="3.5" Width="3.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAIAQAAABAAIAAAAAAAAIAAAAAIAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAIAQAAABAAIAAAAAAAAIAAACAIAAAAAAAAAAAA=</HashCode>
       <FileName>Controllers\PersonaController.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -65,10 +66,11 @@
       <Field Name="_banking" />
       <Field Name="_simulation" />
       <Field Name="_logger" />
+      <Field Name="_priceService" />
     </ShowAsAssociation>
   </Class>
   <Class Name="Backend.Controllers.StockController">
-    <Position X="11" Y="9.75" Width="1.5" />
+    <Position X="5.75" Y="5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>BAABAAAAAAAAAAAAAAAAIAAAIAAAAAIAAAAAAAAAAAA=</HashCode>
       <FileName>Controllers\StockController.cs</FileName>
@@ -80,9 +82,9 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="Backend.Controllers.TimeController">
-    <Position X="5" Y="9.75" Width="1.5" />
+    <Position X="5" Y="7.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>RAAAAAAAQAAAAgAAAgAAAAAAIAAABAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>RgAAAAAAQAAAAgAAAgAAAAAAAAAABAAAAAAAAAAAAAA=</HashCode>
       <FileName>Controllers\TimeController.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -91,99 +93,95 @@
       <Field Name="_stock" />
       <Field Name="_tax" />
       <Field Name="_simulation" />
-      <Field Name="_logger" />
+      <Field Name="_price" />
     </ShowAsAssociation>
   </Class>
   <Class Name="Backend.Services.DebitOrderBody">
-    <Position X="8.5" Y="27.25" Width="3.75" />
+    <Position X="3" Y="28.25" Width="3.75" />
     <TypeIdentifier>
       <HashCode>CAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAIAAAIACAAAAA=</HashCode>
-      <FileName>Helpers\BankingService.cs</FileName>
+      <FileName>Services\BankingService.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Field Name="Recepient" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="Backend.Services.Recepient">
-    <Position X="9.75" Y="24.5" Width="2" />
+  <Class Name="Backend.Services.PaymentRecepient">
+    <Position X="4.5" Y="25.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAACAAAAAAAAA=</HashCode>
-      <FileName>Helpers\BankingService.cs</FileName>
+      <FileName>Services\BankingService.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Backend.Services.BankingService">
-    <Position X="10" Y="15.5" Width="4.25" />
+    <Position X="14.5" Y="15.5" Width="4.25" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAAAAAAACAAAAAIAAAAAAAAAAAAQAAA=</HashCode>
-      <FileName>Helpers\BankingService.cs</FileName>
+      <FileName>Services\BankingService.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Backend.Services.BaseService">
-    <Position X="5.5" Y="12.25" Width="6.5" />
+    <Position X="8" Y="12.25" Width="6.5" />
     <TypeIdentifier>
-      <HashCode>AAAAQAAAAQAAAABAABAEAAAAIAAAIAAAAEAAAAIAAAA=</HashCode>
-      <FileName>Helpers\BaseService.cs</FileName>
+      <HashCode>AAAAQAAAAQAAAADAABAEAAAAIAAAAAAAAEAAAAIAAAA=</HashCode>
+      <FileName>Services\BaseService.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Field Name="_logger" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="Backend.Services.SimulationService" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="18" Y="2.5" Width="1.5" />
+  <Class Name="Backend.Services.SimulationService" BaseTypeListCollapsed="true">
+    <Position X="19.25" Y="15.5" Width="4" />
     <TypeIdentifier>
       <HashCode>AAAIAgAAAQAABCAAAIAAQQAAIABAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Helpers\SimulationService.cs</FileName>
+      <FileName>Services\SimulationService.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="Backend.Services.StockExchangeService">
-    <Position X="6" Y="15.5" Width="3.25" />
+    <Position X="10.5" Y="15.5" Width="3.25" />
+    <Compartments>
+      <Compartment Name="Public" Collapsed="true" />
+    </Compartments>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAgAAAAAAACAAAAEAABAAAQAAAAQAEAAAA=</HashCode>
-      <FileName>Helpers\StockExchangeService.cs</FileName>
+      <HashCode>AAAAAAAAAAAgCAAAAAACAAAAEAABAAAQAAAASAEAAgA=</HashCode>
+      <FileName>Services\StockExchangeService.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Backend.Services.TaxService">
-    <Position X="3.25" Y="15.5" Width="2" />
+    <Position X="3.75" Y="15.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAFAAAAAAACAAABAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Helpers\TaxService.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAACAAABAAAAAAAAAAAAAAE=</HashCode>
+      <FileName>Services\TaxService.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Backend.Jobs.Timed">
-    <Position X="6.5" Y="7.75" Width="4.5" />
+  <Class Name="Backend.Jobs.TimedJobs">
+    <Position X="0.5" Y="5.75" Width="4.5" />
     <TypeIdentifier>
-      <HashCode>RAAAAAABQAAAAAAAAAAAAAAAIAAAAAIAAAAAAAAAABA=</HashCode>
-      <FileName>Helpers\Timed.cs</FileName>
+      <HashCode>RAAAAAABQAAAAAAAAAAAAAAAAAAACAIAAAAAAAAAABA=</HashCode>
+      <FileName>Services\TimedJobs.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Field Name="_loggerContext" />
       <Field Name="_stock" />
-      <Field Name="_logger" />
       <Field Name="_taxService" />
       <Field Name="_simulation" />
       <Field Name="_banking" />
+      <Field Name="_priceService" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="Backend.Helpers.Insurance" Collapsed="true">
-    <Position X="23.25" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAQAAAQAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Helpers\Insurance.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="Backend.Models.AddElectronics" Collapsed="true">
-    <Position X="18" Y="0.5" Width="1.5" />
+    <Position X="19.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAACAAAAA=</HashCode>
       <FileName>Models\AddElectronics.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Backend.Models.BankNotification">
-    <Position X="14.25" Y="18.75" Width="2.75" />
+    <Position X="10.75" Y="21.75" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
       <FileName>Models\BankNotification.cs</FileName>
@@ -193,28 +191,28 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="Backend.Models.TransactionInfo">
-    <Position X="14" Y="20.75" Width="3" />
+    <Position X="10.75" Y="23.75" Width="3" />
     <TypeIdentifier>
       <HashCode>AAACAACEAAAAAAAAAAAAABCACAAAAAABAAAAAAAAAAA=</HashCode>
       <FileName>Models\BankNotification.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Backend.Models.DestroyedElectronics" Collapsed="true">
-    <Position X="19.75" Y="0.5" Width="1.5" />
+    <Position X="21.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAAAAA=</HashCode>
       <FileName>Models\DestroyedElectronics.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Backend.Models.DividendsResponse" Collapsed="true">
-    <Position X="21.5" Y="0.5" Width="1.5" />
+    <Position X="23.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Models\DividendsResponse.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Backend.Models.Log" Collapsed="true">
-    <Position X="18" Y="1.5" Width="1.5" />
+    <Position X="25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAA=</HashCode>
       <FileName>Models\Log.cs</FileName>
@@ -235,7 +233,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Backend.Models.PersonaUpdate">
-    <Position X="4" Y="20.5" Width="3" />
+    <Position X="4.75" Y="19.5" Width="3" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAgAAACAAAAAAg=</HashCode>
       <FileName>Models\PersonaUpdate.cs</FileName>
@@ -247,21 +245,21 @@
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Backend.Models.Marriage">
-    <Position X="8.5" Y="20.25" Width="2.25" />
+    <Position X="9" Y="19.25" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAgAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Models\PersonaUpdate.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Backend.Models.ChildRelation">
-    <Position X="2.25" Y="18.25" Width="2.5" />
+    <Position X="1" Y="19.25" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAIAAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Models\PersonaUpdate.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Backend.Models.Death">
-    <Position X="4.25" Y="22.25" Width="2.5" />
+    <Position X="5" Y="21.25" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAQAAAAAAAAAAAAAQAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Models\PersonaUpdate.cs</FileName>
@@ -281,37 +279,66 @@
       <FileName>Models\TimeRequest.cs</FileName>
     </TypeIdentifier>
   </Class>
+  <Class Name="Backend.Services.Transaction" Collapsed="true">
+    <Position X="21.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAgAAAABCACAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\BankingService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Backend.Services.TransactionList" Collapsed="true">
+    <Position X="23.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\BankingService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Backend.Services.PriceService">
+    <Position X="6.5" Y="15.5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAQAAAAAAAAAAAAAAAAIAAAAAAAABAAAAAAA=</HashCode>
+      <FileName>Services\InsuranceService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
   <Interface Name="Backend.Services.IBankingService">
-    <Position X="5.75" Y="3.5" Width="4.25" />
+    <Position X="8.5" Y="0.5" Width="4.25" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAQAAA=</HashCode>
-      <FileName>Helpers\BankingService.cs</FileName>
+      <FileName>Services\BankingService.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Backend.Services.ISimulationService">
-    <Position X="2.25" Y="2.75" Width="2.5" />
+    <Position X="1.25" Y="8.25" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAQAABAAAAAAAQQAAIABAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Helpers\SimulationService.cs</FileName>
+      <FileName>Services\SimulationService.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Backend.Services.IStockExchangeService">
-    <Position X="0.5" Y="10" Width="3.25" />
+    <Position X="4" Y="1.75" Width="3.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAgAAAAAAAAAAAAEAABAAAQAAAAAAAAAAA=</HashCode>
-      <FileName>Helpers\StockExchangeService.cs</FileName>
+      <HashCode>AAAAAAAAAAAgCAAAAAAAAAAAEAABAAAQAAAAAAAAAAA=</HashCode>
+      <FileName>Services\StockExchangeService.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Backend.Services.ITaxService">
-    <Position X="13.5" Y="8.75" Width="2" />
+    <Position X="4.75" Y="10.75" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAEAAAAAAACAAABAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Helpers\TaxService.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAACAAABAAAAAAAAAAAAAAE=</HashCode>
+      <FileName>Services\TaxService.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Microsoft.Extensions.Logging.ILogger&lt;TCategoryName&gt;" Collapsed="true">
-    <Position X="8" Y="10" Width="1.5" />
+    <Position X="10.5" Y="10" Width="1.5" />
     <TypeIdentifier />
+  </Interface>
+  <Interface Name="Backend.Services.IPriceService">
+    <Position X="1.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAQAAAAAAAAAAAAAAAAIAAAAAAAABAAAAAAA=</HashCode>
+      <FileName>Services\InsuranceService.cs</FileName>
+    </TypeIdentifier>
   </Interface>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

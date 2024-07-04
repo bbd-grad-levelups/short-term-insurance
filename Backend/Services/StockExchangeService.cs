@@ -2,9 +2,9 @@ using Backend.Models;
 
 namespace Backend.Services;
 
-record RegisterBody(string Name, string BankAccount);
-record StockSaleBody(string CompanyId, int Quantity);
-record DividendsBody(string BusinessId, long Amount);
+record RegisterBody(string name, string bankAccount);
+record StockSaleBody(string companyId, int quantity);
+record DividendsBody(string businessId, long amount);
 
 public interface IStockExchangeService
 {
