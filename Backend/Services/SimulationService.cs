@@ -1,20 +1,20 @@
-namespace Backend.Helpers;
+namespace Backend.Services;
 
-public record TimeEvents(bool NewMonth, bool NewYear);
+public record TimeEvents(bool NewMonth, bool NewYear, string NewDate);
 
 public interface ISimulationService
 {
   bool IsRunning { get; set; }
-  string CurrentDate { get; set; }
+  string CurrentDate { get; }
 
-  void StartSim();
+  void StartSim(DateTime startTime);
   TimeEvents UpdateDate();
   void Reset();
+  int DaysSinceDate(string date);
 }
 
-public class SimulationService(ILogger<SimulationService> logger) : ISimulationService
+public class SimulationService() : ISimulationService
 {
-  private readonly ILogger<SimulationService> _logger = logger;
 
   internal DateTime simStart;
   public string CurrentDate { get; set; } = "01|01|01";
@@ -26,8 +26,7 @@ public class SimulationService(ILogger<SimulationService> logger) : ISimulationS
     var newDate = CalculateTime();
     TimeEvents events = CompareDates(CurrentDate, newDate);
     CurrentDate = newDate;
-
-    return events;
+    return new TimeEvents(events.NewMonth, events.NewYear, newDate);
   }
 
   internal string CalculateTime()
@@ -37,11 +36,11 @@ public class SimulationService(ILogger<SimulationService> logger) : ISimulationS
     int simDaysPassed = (int)Math.Round(timePassed.TotalMinutes) / 2;
 
     int years = simDaysPassed / (12 * 30);
-    int months = (simDaysPassed % (12 * 30)) / 30;
-    int days = (simDaysPassed % (12 * 30)) % 30;
+    int months = simDaysPassed % (12 * 30) / 30;
+    int days = simDaysPassed % (12 * 30) % 30;
 
     // Format the date as YY|MM|DD
-    string formattedDate = $"{years:00}|{months + 1:00}|{days + 1:00}";
+    string formattedDate = $"{years + 1:00}|{months + 1:00}|{days + 1:00}";
     return formattedDate;
   }
 
@@ -58,7 +57,7 @@ public class SimulationService(ILogger<SimulationService> logger) : ISimulationS
     bool isNewMonth = newMonth != oldMonth;
     bool isNewYear = newYear != oldYear;
 
-    return new TimeEvents(isNewMonth, isNewYear);
+    return new TimeEvents(isNewMonth, isNewYear, "");
   }
 
   public void Reset()
@@ -66,9 +65,27 @@ public class SimulationService(ILogger<SimulationService> logger) : ISimulationS
     IsRunning = false;
   }
 
-  public void StartSim()
+  public void StartSim(DateTime startTime)
   {
     IsRunning = true;
-    CurrentDate = "01|01|01";
+    simStart = startTime;
+    TimeEvents events = UpdateDate();
+    CurrentDate = events.NewDate;
+  }
+
+  public int DaysSinceDate(string date)
+  {
+    return ConvertToDays(CurrentDate) - ConvertToDays(date);
+  }
+
+  internal static int ConvertToDays(string date)
+  {
+    var dateParts = date.Split('|');
+    
+    int years = int.Parse(dateParts[0]);
+    int months = int.Parse(dateParts[1]);
+    int days = int.Parse(dateParts[2]);
+
+    return (years * 12 + months) * 30 + days;
   }
 }

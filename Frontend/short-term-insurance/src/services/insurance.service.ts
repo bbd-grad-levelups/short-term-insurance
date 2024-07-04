@@ -17,7 +17,7 @@ export class InsuranceService {
 
   getPersonas(page: number): Observable<Pagination<Persona>> {
     return this.httpClient.get<any>(
-      `${this.baseUrl}/api/personas?page=${page}&pageSize=5`
+      `${this.baseUrl}/api/personas?page=${page}&pageSize=10`
     ).pipe(
       map((response) => {
         return {
@@ -25,7 +25,8 @@ export class InsuranceService {
             return {
               personaId: persona.personaId,
               electronics: persona.electronics,
-              blacklisted: this.isBlacklisted(persona.lastPaymentDate)
+              blacklisted: persona.lastPaymentDate.replace(/\|/g, '/'),
+              debitOrderId: persona.debitOrderId
             }
           }),
           page: response.page,
@@ -38,28 +39,21 @@ export class InsuranceService {
 
   getLogs(beginDate: string, endDate: string, page: number): Observable<Pagination<Logs>> {
     return this.httpClient.get<any>(
-      `${this.baseUrl}/api/log?beginDate=${beginDate}&endDate=${endDate}&page=${page}&pageSize=5`
+      `${this.baseUrl}/api/log?beginDate=${beginDate}&endDate=${endDate}&page=${page}&pageSize=10`
     ).pipe(
       map((response) => {
         return {
-          data: response.logs,
+          data: response.logs.map((log: any) => {
+            return {
+              timeStamp: log.timeStamp.replace(/\|/g, '/'),
+              message: log.message
+            }
+          }),
           page: response.page,
           availablePages: response.availablePages,
           pageSize: response.pageSize
         }
       })
     )
-  }
-
-  isBlacklisted(lastPaymentDate: string): boolean {
-    const BUFFER = 30 * 24 * 60 * 60 * 1000;
-    const lastPayment = new Date(lastPaymentDate.replace(/\|/g, "/"));
-    const currentDate = new Date();
-
-    const diffTime = currentDate.getTime() - lastPayment.getTime();
-    if (diffTime > BUFFER) {
-      return true;
-    }
-    return false;
   }
 }

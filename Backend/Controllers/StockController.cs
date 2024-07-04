@@ -1,18 +1,16 @@
-using Microsoft.AspNetCore.Mvc;
 using Backend.Models;
-using Backend.Helpers;
-using Backend.Controllers;
-using Backend.Contexts;
+using Backend.Services;
+
+using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
 
-[Route("api/insurance")]
+[Route("api/stock")]
 [ApiController]
-public class InsuranceController(PersonaContext context, IStockExchangeService stock, IBankingService banking, ILogger<InsuranceController> logger) : ControllerBase
+public class StockController(IStockExchangeService stock, IBankingService banking, ILogger<StockController> logger) : ControllerBase
 {
-  private readonly PersonaContext _context = context;
   private readonly IStockExchangeService _stock = stock;
-  private readonly ILogger<InsuranceController> _logger = logger;
+  private readonly ILogger<StockController> _logger = logger;
   private readonly IBankingService _banking = banking;
 
   /// <summary>
@@ -23,6 +21,9 @@ public class InsuranceController(PersonaContext context, IStockExchangeService s
   [HttpPost("registered")]
   public async Task<ActionResult> ReceiveStockRegistration([FromBody] RegisterStockResponse request)
   {
+    _logger.LogInformation("Stock Exchange registration successful (ID: {tradingId}). Registering initial company stock on the Stock Exchange", request.TradingId);
+    _stock.ReceiveRegistration(request);
+
     await _stock.SellStock(10000);
     return Ok();
   }
@@ -35,7 +36,9 @@ public class InsuranceController(PersonaContext context, IStockExchangeService s
   [HttpPost("dividends")]
   public async Task<ActionResult> ReceiveDividendsReference([FromBody] DividendsResponse request)
   {
-    await _banking.MakeCommercialPayment(request.ReferenceId);
+    _logger.LogInformation("Received dividends payment reference {ReferenceId}, making payment", request.ReferenceId);
+
+    await _banking.MakeCommercialPayment("stock_exchange", request.ReferenceId, _stock.GetLastDividends());
     return Ok();
   }
 }

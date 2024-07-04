@@ -1,20 +1,22 @@
+using Backend.Models;
+using Backend.Contexts;
+using Backend.Services;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Backend.Models;
-using Backend.Helpers;
-using Backend.Contexts;
 
 namespace Backend.Controllers;
 
 [Route("api/banking")]
 [ApiController]
-public class BankingController(PersonaContext context, IBankingService banking, ILogger logger) : ControllerBase
+public class BankingController(PersonaContext context, LoggerContext logCon, ISimulationService simulation, ITaxService tax, ILogger<BankingController> logger) : ControllerBase
 {
   private readonly PersonaContext _context = context;
-  private readonly IBankingService _banking = banking;
-  private readonly ILogger _logger = logger;
+  private readonly LoggerContext _logCon = logCon;
+  private readonly ISimulationService _simulation = simulation;
+  private readonly ITaxService _taxService = tax;
+  private readonly ILogger<BankingController> _logger = logger;
 
-  // Currently stubbed, pending bank API spec
   /// <summary>
   /// Endpoint to receive debit order payment success from bank. (Not finalised)
   /// </summary>
@@ -23,67 +25,36 @@ public class BankingController(PersonaContext context, IBankingService banking, 
   [HttpPost("commercial")]
   public async Task<ActionResult> ReceiveCommercialBankNotification([FromBody] BankNotification request)
   {
-    // This will basically just be "we failed payment" or "persona failed payment"
-    if (request.Message == "Persona payment")
+    Log log;
+    if (request.Type.Equals("incoming_payment"))
     {
-      var currentPersona = await _context.Personas.FirstOrDefaultAsync(p => p.PersonaId == request.PersonaId);
+      var success = int.TryParse(request.Transaction.Reference, out int debitOrderId);
 
-      if (currentPersona == null)
+      var currentPersona = await _context.Personas.FirstOrDefaultAsync(p => p.DebitOrderId == debitOrderId);
+      if (currentPersona != null)
       {
-        return Ok();
-      }
-      else
-      {
-        currentPersona.Blacklisted = request.Success;
-
-        _context.Entry(currentPersona).State = EntityState.Modified;
+        currentPersona.LastPaymentDate = _simulation.CurrentDate;
 
         await _context.SaveChangesAsync();
-
-        return Ok();
       }
+
+      _taxService.Profit += (long)Math.Round(request.Transaction.Amount);
+      log = new Log(_simulation.CurrentDate, $"Received bank payment: {request.Transaction.Reference}");
     }
-    else if (request.Message == "Company payment")
+    else if (request.Type.Equals("outgoing_payment"))
     {
-      if (!request.Success)
-      {
-        // Either retry payment, or take out a loan before retrying?
-      }
-
-      return Ok();
+      _taxService.Profit -= (long)Math.Round(request.Transaction.Amount);
+      log = new Log(_simulation.CurrentDate, $"Received bank payment: {request.Transaction.Reference}");
     }
-    else return Ok();
-  }
-
-  // Response on request for an updated debit order
-  /// <summary>
-  /// Endpoint to receive response on updating a debit order. (Not finalised)
-  /// </summary>
-  /// <param name="request"></param>
-  /// <returns></returns>
-  [HttpPost("retail")]
-  public async Task<ActionResult> ReceiveRetailBankNotification([FromBody] BankNotification request)
-  {
-    if (request.Message == "Debit update")
+    else
     {
-      if (!request.Success)
-      {
-        // Might need to retry the update, pending what messages they actually have
-      }
+      log = new Log(_simulation.CurrentDate, "");
     }
-    else if (request.Message == "Debit payment")
-    {
-      if (request.Success)
-      {
-        // Unblacklist person
-      }
-      else
-      {
-        // blacklist person
-      }
-    }
-    _logger.LogInformation("Retail notification: " + request.ToString());
 
+    _logCon.Add(log);
+    await _logCon.SaveChangesAsync();
+
+    _logger.LogInformation("Received commercial banking payment: {message}", request.Transaction.ToString());
     return Ok();
   }
 }
